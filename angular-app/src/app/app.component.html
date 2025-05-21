@@ -9,4 +9,12 @@
 @if (loader.loader()) {
   <ec-loader />
 }
-<ec-chat />
+
+<details>
+  <summary>Chat</summary>
+  @defer (on viewport) {
+    <ec-chat/>
+  } @placeholder {
+    <span>Loading...</span>
+  }
+</details>

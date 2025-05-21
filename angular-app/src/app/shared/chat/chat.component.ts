@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, signal, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -7,79 +7,28 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="chat-container" [class.collapsed]="isCollapsed()">
-      <div class="chat-header" (click)="toggleChat()">
-        <h3>Chat</h3>
-        <button class="toggle-btn">
-          {{ isCollapsed() ? '▲' : '▼' }}
-        </button>
+    <div class="chat-container">
+      <div class="messages" #messagesContainer>
+        @for (message of messages(); track message) {
+          <div class="message" [class.sent]="message.sent">
+            <div class="message-content">{{ message.text }}</div>
+          </div>
+        }
       </div>
-      @if (!isCollapsed()) {
-        <div class="chat-body">
-          <div class="messages">
-            @for (message of messages(); track message) {
-              <div class="message" [class.sent]="message.sent">
-                <div class="message-content">{{ message.text }}</div>
-              </div>
-            }
-          </div>
-          <div class="input-area">
-            <input
-              type="text"
-              [(ngModel)]="newMessage"
-              (keyup.enter)="sendMessage()"
-              placeholder="Type a message..."
-            />
-            <button (click)="sendMessage()">Send</button>
-          </div>
-        </div>
-      }
+      <div class="input-area">
+        <input
+          type="text"
+          [(ngModel)]="newMessage"
+          (keyup.enter)="sendMessage()"
+          placeholder="Type a message..."
+        />
+        <button (click)="sendMessage()">Send</button>
+      </div>
     </div>
   `,
   styles: [`
     .chat-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 300px;
-      background: #1a1a1a;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
-      z-index: 1000;
-      color: #ffffff;
-    }
-
-    .chat-container.collapsed {
-      height: 40px;
-    }
-
-    .chat-header {
-      padding: 10px;
-      background: #2d2d2d;
-      color: #ffffff;
-      border-radius: 8px 8px 0 0;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chat-header h3 {
-      margin: 0;
-      font-size: 16px;
-    }
-
-    .toggle-btn {
-      background: none;
-      border: none;
-      color: #ffffff;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .chat-body {
-      height: 400px;
+      height: 500px;
       display: flex;
       flex-direction: column;
       background: #1a1a1a;
@@ -89,6 +38,7 @@ import { FormsModule } from '@angular/forms';
       flex: 1;
       overflow-y: auto;
       padding: 10px;
+      scroll-behavior: smooth;
     }
 
     .message {
@@ -170,12 +120,19 @@ import { FormsModule } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatComponent {
-  isCollapsed = signal(false);
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
   messages = signal<Array<{ text: string; sent: boolean }>>([]);
   newMessage = '';
 
-  toggleChat() {
-    this.isCollapsed.update(v => !v);
+  constructor() {
+    afterNextRender(() => {
+      this.scrollToBottom();
+    });
+  }
+
+  private scrollToBottom(): void {
+    const container = this.messagesContainer.nativeElement;
+    container.scrollTop = container.scrollHeight;
   }
 
   sendMessage() {
@@ -185,6 +142,11 @@ export class ChatComponent {
         { text: this.newMessage, sent: true }
       ]);
       this.newMessage = '';
+      
+      // Use requestAnimationFrame to ensure the DOM has updated
+      requestAnimationFrame(() => {
+        this.scrollToBottom();
+      });
     }
   }
 } 

@@ -19,3 +19,16 @@
     width: 100%;
   }
 }
+
+details {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 400px;
+  background-color: black;
+
+  summary {
+    padding: 15px;
+    font-size: 1.2rem;
+  }
+}

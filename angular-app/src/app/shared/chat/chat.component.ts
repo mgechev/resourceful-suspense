@@ -1,6 +1,14 @@
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, signal, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { marked } from 'marked';
+
+interface ChatMessage {
+  text: string;
+  sent: boolean;
+  html?: SafeHtml;
+}
 
 @Component({
   selector: 'ec-chat',
@@ -11,7 +19,7 @@ import { FormsModule } from '@angular/forms';
       <div class="messages" #messagesContainer>
         @for (message of messages(); track message) {
           <div class="message" [class.sent]="message.sent">
-            <div class="message-content">{{ message.text }}</div>
+            <div class="message-content" [innerHTML]="message.html || message.text"></div>
           </div>
         }
       </div>
@@ -52,6 +60,26 @@ import { FormsModule } from '@angular/forms';
       border-radius: 12px;
       display: inline-block;
       color: #ffffff;
+    }
+
+    .message-content :global(p) {
+      margin: 0;
+    }
+
+    .message-content :global(pre) {
+      background: #1a1a1a;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+
+    .message-content :global(code) {
+      font-family: monospace;
+    }
+
+    .message-content :global(ul), .message-content :global(ol) {
+      margin: 0;
+      padding-left: 20px;
     }
 
     .message.sent {
@@ -121,10 +149,10 @@ import { FormsModule } from '@angular/forms';
 })
 export class ChatComponent {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
-  messages = signal<Array<{ text: string; sent: boolean }>>([]);
+  messages = signal<ChatMessage[]>([]);
   newMessage = '';
 
-  constructor() {
+  constructor(private sanitizer: DomSanitizer) {
     afterNextRender(() => {
       this.scrollToBottom();
     });
@@ -137,16 +165,28 @@ export class ChatComponent {
 
   sendMessage() {
     if (this.newMessage.trim()) {
-      this.messages.update(messages => [
-        ...messages,
-        { text: this.newMessage, sent: true }
-      ]);
-      this.newMessage = '';
-      
-      // Use requestAnimationFrame to ensure the DOM has updated
-      requestAnimationFrame(() => {
-        this.scrollToBottom();
+      this.addMessage(this.newMessage, true);
+
+      fetch(`/api/prompt?prompt=${this.newMessage}`)
+      .then(response => response.json())
+      .then(data => {
+        this.addMessage(data.answer, false);
       });
+      
+      this.newMessage = '';
     }
+  }
+
+  private addMessage(message: string, sent: boolean) {
+    const html = this.sanitizer.bypassSecurityTrustHtml(marked.parse(message) as string);
+    this.messages.update(messages => [
+      ...messages,
+      { text: message, sent, html }
+    ]);
+    
+    // Use requestAnimationFrame to ensure the DOM has updated
+    requestAnimationFrame(() => {
+      this.scrollToBottom();
+    });
   }
 } 

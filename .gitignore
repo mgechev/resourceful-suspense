@@ -43,4 +43,5 @@ Thumbs.db
 .angular
 
 dist
+.env
 

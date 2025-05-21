@@ -12,15 +12,18 @@ import { HeaderComponent } from './shared/header/header.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { LoaderComponent } from './shared/loader/loader.component';
 import { LoaderService } from './shared/loader.service';
+import { ChatComponent } from './shared/chat/chat.component';
 
 @Component({
   selector: 'ec-root',
+  standalone: true,
   imports: [
     RouterOutlet,
     HeaderComponent,
     FooterComponent,
     LoaderComponent,
     TOASTS_COMPONENTS,
+    ChatComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

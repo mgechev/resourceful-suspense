@@ -1,0 +1,190 @@
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'ec-chat',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="chat-container" [class.collapsed]="isCollapsed()">
+      <div class="chat-header" (click)="toggleChat()">
+        <h3>Chat</h3>
+        <button class="toggle-btn">
+          {{ isCollapsed() ? '▲' : '▼' }}
+        </button>
+      </div>
+      @if (!isCollapsed()) {
+        <div class="chat-body">
+          <div class="messages">
+            @for (message of messages(); track message) {
+              <div class="message" [class.sent]="message.sent">
+                <div class="message-content">{{ message.text }}</div>
+              </div>
+            }
+          </div>
+          <div class="input-area">
+            <input
+              type="text"
+              [(ngModel)]="newMessage"
+              (keyup.enter)="sendMessage()"
+              placeholder="Type a message..."
+            />
+            <button (click)="sendMessage()">Send</button>
+          </div>
+        </div>
+      }
+    </div>
+  `,
+  styles: [`
+    .chat-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      background: #1a1a1a;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      color: #ffffff;
+    }
+
+    .chat-container.collapsed {
+      height: 40px;
+    }
+
+    .chat-header {
+      padding: 10px;
+      background: #2d2d2d;
+      color: #ffffff;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .toggle-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .chat-body {
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      background: #1a1a1a;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      max-width: 80%;
+    }
+
+    .message-content {
+      padding: 8px 12px;
+      background: #2d2d2d;
+      border-radius: 12px;
+      display: inline-block;
+      color: #ffffff;
+    }
+
+    .message.sent {
+      margin-left: auto;
+    }
+
+    .message.sent .message-content {
+      background: #007bff;
+      color: #ffffff;
+    }
+
+    .input-area {
+      padding: 10px;
+      border-top: 1px solid #2d2d2d;
+      display: flex;
+      gap: 8px;
+      background: #1a1a1a;
+    }
+
+    input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #2d2d2d;
+      border-radius: 4px;
+      outline: none;
+      background: #2d2d2d;
+      color: #ffffff;
+    }
+
+    input::placeholder {
+      color: #888888;
+    }
+
+    button {
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    /* Custom scrollbar for dark theme */
+    .messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .messages::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: #2d2d2d;
+      border-radius: 3px;
+    }
+
+    .messages::-webkit-scrollbar-thumb:hover {
+      background: #3d3d3d;
+    }
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ChatComponent {
+  isCollapsed = signal(false);
+  messages = signal<Array<{ text: string; sent: boolean }>>([]);
+  newMessage = '';
+
+  toggleChat() {
+    this.isCollapsed.update(v => !v);
+  }
+
+  sendMessage() {
+    if (this.newMessage.trim()) {
+      this.messages.update(messages => [
+        ...messages,
+        { text: this.newMessage, sent: true }
+      ]);
+      this.newMessage = '';
+    }
+  }
+} 

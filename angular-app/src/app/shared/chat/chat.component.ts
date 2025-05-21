@@ -6,7 +6,7 @@ import { marked } from 'marked';
 
 interface ChatMessage {
   text: string;
-  sent: boolean;
+  by: 'user' | 'bot';
   html?: SafeHtml;
 }
 
@@ -18,7 +18,7 @@ interface ChatMessage {
     <div class="chat-container">
       <div class="messages" #messagesContainer>
         @for (message of messages(); track message) {
-          <div class="message" [class.sent]="message.sent">
+          <div class="message" [class.user]="message.by === 'user'">
             <div class="message-content" [innerHTML]="message.html || message.text"></div>
           </div>
         }
@@ -82,11 +82,11 @@ interface ChatMessage {
       padding-left: 20px;
     }
 
-    .message.sent {
+    .message.user {
       margin-left: auto;
     }
 
-    .message.sent .message-content {
+    .message.user .message-content {
       background: #007bff;
       color: #ffffff;
     }
@@ -165,23 +165,23 @@ export class ChatComponent {
 
   sendMessage() {
     if (this.newMessage.trim()) {
-      this.addMessage(this.newMessage, true);
+      this.addMessage(this.newMessage, 'user');
 
       fetch(`/api/prompt?prompt=${this.newMessage}`)
       .then(response => response.json())
       .then(data => {
-        this.addMessage(data.answer, false);
+        this.addMessage(data.answer, 'bot');
       });
       
       this.newMessage = '';
     }
   }
 
-  private addMessage(message: string, sent: boolean) {
+  private addMessage(message: string, by: 'user' | 'bot') {
     const html = this.sanitizer.bypassSecurityTrustHtml(marked.parse(message) as string);
     this.messages.update(messages => [
       ...messages,
-      { text: message, sent, html }
+      { text: message, by, html }
     ]);
     
     // Use requestAnimationFrame to ensure the DOM has updated

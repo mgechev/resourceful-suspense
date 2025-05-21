@@ -1,0 +1,23 @@
+.current {
+  color: #e53935;
+  font-weight: bold;
+  margin-right: 8px;
+}
+s {
+  color: #888;
+  margin-right: 8px;
+}
+.ec-chip.solid {
+  display: inline-block;
+  background: #e53935;
+  color: #fff;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin-left: 8px;
+}
+.ec-chip.solid.large {
+  font-size: 1em;
+  padding: 4px 12px;
+} 

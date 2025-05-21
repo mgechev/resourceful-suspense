@@ -1,0 +1,22 @@
+.theme-switch {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.theme-switch:focus {
+  outline: 2px solid #1976d2;
+}
+body.theme-light {
+  background: #fafafa;
+  color: #222;
+}
+body.theme-dark {
+  background: #181818;
+  color: #fafafa;
+} 

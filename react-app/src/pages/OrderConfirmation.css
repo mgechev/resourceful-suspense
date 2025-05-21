@@ -1,0 +1,190 @@
+.order-confirmation {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.success-message {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  background-color: #e8f5e9;
+  border-radius: 8px;
+}
+
+.success-message h1 {
+  color: #2e7d32;
+  margin-bottom: 8px;
+  font-size: 2em;
+}
+
+.success-message p {
+  color: #388e3c;
+  font-size: 1.1em;
+}
+
+.order-details {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.order-details h2 {
+  margin-bottom: 24px;
+  font-size: 1.6em;
+  color: #333;
+}
+
+.order-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-group label {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.info-group span {
+  font-size: 1.1em;
+  color: #333;
+}
+
+.status {
+  text-transform: capitalize;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.status.pending {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.status.processing {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.status.shipped {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.delivered {
+  background-color: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.shipping-info {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.shipping-info h3 {
+  margin-bottom: 16px;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.shipping-info p {
+  margin: 4px 0;
+  color: #555;
+}
+
+.order-items {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 4px;
+}
+
+.order-items h3 {
+  margin-bottom: 16px;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.item-name {
+  font-weight: 500;
+}
+
+.item-quantity {
+  color: #666;
+}
+
+.item-price {
+  text-align: right;
+  font-weight: 500;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #ddd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.action-buttons {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.continue-shopping-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.continue-shopping-btn:hover {
+  background-color: #45a049;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2em;
+  color: #666;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 4px;
+  margin: 20px 0;
+  text-align: center;
+} 

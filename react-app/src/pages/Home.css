@@ -1,0 +1,137 @@
+.home {
+  padding: 20px;
+}
+.home-background {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1200x400');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.home-background h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+.home-background p {
+  font-size: 1.2em;
+}
+
+.search,
+.spacer {
+  height: 288px;
+}
+
+.search {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  right: 0;
+}
+
+.search .bg {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-french-violet);
+  opacity: 0.8;
+  overflow: hidden;
+}
+
+.search .bg .bg-img {
+  position: absolute;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  animation: bg-movement 10s infinite ease;
+  min-width: 1000px;
+}
+
+.search .content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--app-max-width);
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.search .content h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.search .content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: var(--color-primary);
+}
+
+.search .content .search-form {
+  position: relative;
+  width: 60%;
+  box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+.search .content .search-input {
+  width: 100%;
+  padding: 0.75rem 6rem 0.75rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+}
+
+.search .content .search-btn {
+  position: absolute;
+  right: 1rem;
+  top: 0.75rem;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: var(--color-quaternary);
+  display: flex;
+  align-items: center;
+  transition: color 300ms ease;
+}
+
+.search .content .search-btn span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+
+.search .content .search-btn:hover:not(:disabled) {
+  color: var(--color-tertiary);
+}
+
+.search .content .search-btn:disabled {
+  color: var(--color-senary);
+}
+
+@keyframes bg-movement {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-40%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 800px) {
+  .search .content {
+    padding: 0 2rem;
+  }
+
+  .search .content .search-form {
+    width: 100%;
+  }
+} 

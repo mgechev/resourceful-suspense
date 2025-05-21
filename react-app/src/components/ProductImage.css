@@ -1,0 +1,13 @@
+.product-image {
+  display: block;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f0f0f0;
+}
+.product-image-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  border-radius: 8px;
+} 

@@ -15,7 +15,7 @@ import { LoaderService } from './shared/loader.service';
 import { ChatComponent } from './shared/chat/chat.component';
 import { httpResource } from '@angular/common/http';
 import { ChatWrapperComponent } from './shared/chat/chat-wrapper.component';
-
+import { LoadingComponent } from './shared/loading/loading.component';
 @Component({
   selector: 'ec-root',
   standalone: true,
@@ -25,7 +25,8 @@ import { ChatWrapperComponent } from './shared/chat/chat-wrapper.component';
     FooterComponent,
     LoaderComponent,
     TOASTS_COMPONENTS,
-    ChatWrapperComponent
+    ChatWrapperComponent,
+    LoadingComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

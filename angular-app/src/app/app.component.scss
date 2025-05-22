@@ -26,10 +26,20 @@ details {
   right: 0;
   width: 400px;
   background-color: black;
+  transition: height 0.3s ease;
+
+  &[open] {
+    height: 555px;
+  }
+
+  &:not([open]) {
+    height: 52px; // Height of summary
+  }
 
   summary {
     padding: 15px;
     font-size: 1.2rem;
+    cursor: pointer;
   }
 
   span {

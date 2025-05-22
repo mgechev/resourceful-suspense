@@ -13,7 +13,7 @@ const ai = genkit({
 
 const tool = ai.defineTool(addToCartTool, addToCartToolFn);
 
-export async function promptModel(prompt: string, tech: 'angular' | 'react') {
+export async function promptModel(prompt: string, name: string, tech: 'angular' | 'react') {
   const basePrompt = `
   You are a helpful assistant that can help the user add items to their cart.
   You are given a list of products to choose from.
@@ -21,7 +21,8 @@ export async function promptModel(prompt: string, tech: 'angular' | 'react') {
   Do not return the product IDs. Only expose the product name and category.
   Here are all the products available:
   ${data[tech].products.map(product => `${product.id} - ${product.name}`).join('\n')}
-  The next message will be from the user. Help them with their request.`;
+  The next message will be from the user. Help them with their request.
+  The user's name is ${name}. Be nice and friendly.`;
 
   // make a generation request
   prompt = `${basePrompt}\n\n${prompt}`;

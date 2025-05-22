@@ -13,6 +13,8 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { LoaderComponent } from './shared/loader/loader.component';
 import { LoaderService } from './shared/loader.service';
 import { ChatComponent } from './shared/chat/chat.component';
+import { httpResource } from '@angular/common/http';
+import { ChatWrapperComponent } from './shared/chat/chat-wrapper.component';
 
 @Component({
   selector: 'ec-root',
@@ -23,7 +25,7 @@ import { ChatComponent } from './shared/chat/chat.component';
     FooterComponent,
     LoaderComponent,
     TOASTS_COMPONENTS,
-    ChatComponent,
+    ChatWrapperComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

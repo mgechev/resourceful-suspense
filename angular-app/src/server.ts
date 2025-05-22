@@ -18,8 +18,16 @@ const angularApp = new AngularNodeAppEngine();
 app.get('/api/prompt', async (req, res) => {
   const prompt = req.query['prompt'] as string;
   const tech = req.query['tech'] as 'angular' | 'react';
-  const response = await promptModel(prompt, tech);
+  const name = req.query['name'] as string;
+  const response = await promptModel(prompt, name, tech);
   res.json(response);
+});
+
+app.get('/api/user', async (_, res) => {
+  res.json({
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+  });
 });
 
 /**

@@ -43,7 +43,7 @@ const CategoryReel: React.FC<CategoryReelProps> = ({ category, isLcp = false }) 
           to={`/products?category=${category.id}`}
           aria-label={`View more from ${category.name} category`}
         >
-          View more -&gt;
+          View more ‣
         </Link>
       </div>
       {error && <div className="error-message">{error}</div>}

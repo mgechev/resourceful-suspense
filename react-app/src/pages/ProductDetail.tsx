@@ -42,7 +42,8 @@ const ProductDetail: React.FC = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      // addToCart(product);
+      addToCart({ ...product, quantity: 1 });
+      navigate('/cart');
     }
   };
 

@@ -1,9 +1,14 @@
 import React from 'react';
+import styles from './Footer.module.css';
 
 const Footer: React.FC = () => {
   return (
-    <footer>
-      <p>&copy; {new Date().getFullYear()} Ecommerce Store</p>
+    <footer className={styles.footer}>
+      <div className={styles.container}>
+        <p className={styles.copyright}>
+          © {new Date().getFullYear()} React Shop. All rights reserved.
+        </p>
+      </div>
     </footer>
   );
 };

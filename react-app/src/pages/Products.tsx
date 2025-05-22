@@ -5,7 +5,7 @@ import SkeletonProductItem from '../components/SkeletonProductItem';
 import PriceTag from '../components/PriceTag';
 import ProductImage from '../components/ProductImage';
 import { Product, Category } from '../api';
-import './Products.css';
+import styles from './Products.module.css';
 
 interface ProductsProps {
   products: Product[];
@@ -40,28 +40,28 @@ const Products: React.FC<ProductsProps> = ({ products, categories }) => {
   };
 
   return (
-    <div className="products-page">
-      <div className="header">
-        <div className="top-bar">
-          <h2 className="category-name">
+    <div className={styles.productsPage}>
+      <div className={styles.header}>
+        <div className={styles.topBar}>
+          <h2 className={styles.categoryName}>
             {category ? categories.find(c => c.id === category)?.name || 'Products' : 'All Products'}
           </h2>
-          {search && <h3 className="search-title">Search results for "{search}"</h3>}
+          {search && <h3 className={styles.searchTitle}>Search results for "{search}"</h3>}
         </div>
         <SearchInput value={search} onChange={handleSearch} placeholder="Search products..." />
       </div>
-      <div className="main">
-        <div className="products-grid">
+      <div className={styles.main}>
+        <div className={styles.productsGrid}>
           {filteredProducts.length > 0 ? (
             filteredProducts.map(product => (
-              <div key={product.id} className="product-item">
+              <div key={product.id} className={styles.productItem}>
                 <ProductImage product={product} size="md" />
                 <h3>{product.name}</h3>
                 <PriceTag product={product} />
               </div>
             ))
           ) : (
-            <div className="no-results">No products found</div>
+            <div className={styles.noResults}>No products found</div>
           )}
         </div>
       </div>

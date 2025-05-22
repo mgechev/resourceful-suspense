@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { marked } from 'marked';
-import './Chat.css';
 import { useCart } from '../../context/CartContext';
+import styles from './Chat.module.css';
 
 interface ChatMessage {
   text: string;
@@ -61,36 +61,44 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className="chat-container">
-      <div className="messages">
-        {messages.map((message: ChatMessage, index: number) => (
-          <div key={index} className={`message ${message.by}`}>
+    <div className={styles.chatContainer}>
+      <div className={styles.chatContent}>
+        <div className={styles.messages}>
+          {messages.map((message: ChatMessage, index: number) => (
             <div 
-              className="message-content" 
-              dangerouslySetInnerHTML={{ __html: marked.parse(message.text) as string }} 
-            />
-          </div>
-        ))}
-        {isLoading && (
-          <div className="message bot">
-            <div className="typing-indicator">
-              <span></span>
-              <span></span>
-              <span></span>
+              key={index} 
+              className={`${styles.message} ${message.by === 'user' ? styles.userMessage : styles.botMessage}`}
+            >
+              <div 
+                className={styles.messageContent}
+                dangerouslySetInnerHTML={{ __html: marked.parse(message.text) as string }} 
+              />
             </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
+          ))}
+          {isLoading && (
+            <div className={styles.typingIndicator}>
+              <div className={styles.typingDot}></div>
+              <div className={styles.typingDot}></div>
+              <div className={styles.typingDot}></div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
-      <div className="input-area">
+      <div className={styles.inputArea}>
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Type your message..."
+          className={styles.input}
           rows={1}
         />
-        <button onClick={sendMessage} disabled={isLoading}>
+        <button 
+          onClick={sendMessage} 
+          disabled={isLoading || !input.trim()}
+          className={styles.sendButton}
+        >
           Send
         </button>
       </div>

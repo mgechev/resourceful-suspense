@@ -9,7 +9,7 @@ import Cart from './pages/Cart';
 import { CartProvider } from './context/CartContext';
 import ChatContainer from './components/Chat/ChatContainer';
 import { getProducts, getCategories, Product, Category } from './api';
-import './App.css';
+import styles from './App.module.css';
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -37,22 +37,24 @@ const App: React.FC = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div className={styles.loading}>Loading...</div>;
+  if (error) return <div className={styles.error}>Error: {error}</div>;
 
   return (
     <CartProvider>
       <Router>
-        <Header />
-        <main style={{ minHeight: '80vh' }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products products={products} categories={categories} />} />
-            <Route path="/products/:id" element={<ProductDetails />} />
-            <Route path="/cart" element={<Cart />} />
-          </Routes>
-        </main>
-        <Footer />
+        <div className={styles.app}>
+          <Header />
+          <main className={styles.main}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products products={products} categories={categories} />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
+              <Route path="/cart" element={<Cart />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
       </Router>
       <ChatContainer name="React" />
     </CartProvider>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { marked } from 'marked';
+import { ActionExecutor } from './action-executor';
 
 interface ChatMessage {
   text: string;
@@ -152,7 +153,7 @@ export class ChatComponent {
   messages = signal<ChatMessage[]>([]);
   newMessage = '';
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private actionExecutor: ActionExecutor) {
     afterNextRender(() => {
       this.scrollToBottom();
     });
@@ -167,10 +168,13 @@ export class ChatComponent {
     if (this.newMessage.trim()) {
       this.addMessage(this.newMessage, 'user');
 
-      fetch(`/api/prompt?prompt=${this.newMessage}`)
+      fetch(`/api/prompt?prompt=${this.newMessage}&tech=angular`)
       .then(response => response.json())
       .then(data => {
-        this.addMessage(data.answer, 'bot');
+        this.addMessage(data.message, 'bot');
+        if (data.action) {
+          this.actionExecutor.executeAction(data.action);
+        }
       });
       
       this.newMessage = '';

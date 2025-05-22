@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { CartService } from "../../data-access/cart.service";
 import { ProductsApi } from "../../api/products-api.service";
 
-interface Action {
+export interface Action {
   type: 'addToCart';
   params: {
     id: string;

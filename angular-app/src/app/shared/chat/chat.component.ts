@@ -1,14 +1,33 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, signal, afterNextRender, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+  signal,
+  afterNextRender,
+  input,
+  viewChild,
+  resource,
+  linkedSignal,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { marked } from 'marked';
-import { ActionExecutor } from './action-executor';
+import { Action, ActionExecutor } from './action-executor';
+import { httpResource } from '@angular/common/http';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 interface ChatMessage {
   text: string;
   by: 'user' | 'bot';
   html?: SafeHtml;
+}
+
+interface Response {
+  message: string;
+  action?: Action;
 }
 
 @Component({
@@ -19,15 +38,18 @@ interface ChatMessage {
     <div class="chat-container">
       <div class="messages" #messagesContainer>
         @for (message of messages(); track message) {
-          <div class="message" [class.user]="message.by === 'user'">
-            <div class="message-content" [innerHTML]="message.html || message.text"></div>
-          </div>
-        }
+        <div class="message" [class.user]="message.by === 'user'">
+          <div
+            class="message-content"
+            [innerHTML]="message.html || message.text"
+          ></div>
+        </div>
+        } @if (nextBotMessage.isLoading()) { Typing... }
       </div>
       <div class="input-area">
         <input
           type="text"
-          [(ngModel)]="newMessage"
+          [(ngModel)]="userMessage"
           (keyup.enter)="sendMessage()"
           placeholder="Type a message..."
         />
@@ -39,49 +61,61 @@ interface ChatMessage {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatComponent {
-  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+  messagesContainer = viewChild.required<ElementRef>('messagesContainer');
   name = input.required<string>();
   messages = signal<ChatMessage[]>([]);
-  newMessage = '';
+  userMessage = '';
+  lastMessage = signal('');
+  isLoading = signal(false).asReadonly();
 
-  constructor(private sanitizer: DomSanitizer, private actionExecutor: ActionExecutor) {
+  nextBotMessage = httpResource<Response>(() =>
+    this.lastMessage()
+      ? `/api/prompt?prompt=${this.lastMessage()}&tech=angular&name=${this.name()}`
+      : undefined
+  );
+
+  constructor(
+    private sanitizer: DomSanitizer,
+    private actionExecutor: ActionExecutor
+  ) {
     afterNextRender(() => {
       this.scrollToBottom();
+    });
+
+    effect(() => {
+      const response = this.nextBotMessage.value();
+      if (!response) return;
+  
+      this.addMessage(response.message, 'bot');
+      if (response.action) {
+        this.actionExecutor.executeAction(response.action);
+      }
     });
   }
 
   private scrollToBottom(): void {
-    const container = this.messagesContainer.nativeElement;
+    const container = this.messagesContainer().nativeElement;
     container.scrollTop = container.scrollHeight;
   }
 
   sendMessage() {
-    if (this.newMessage.trim()) {
-      this.addMessage(this.newMessage, 'user');
-
-      fetch(`/api/prompt?prompt=${this.newMessage}&tech=angular&name=${this.name()}`)
-      .then(response => response.json())
-      .then(data => {
-        this.addMessage(data.message, 'bot');
-        if (data.action) {
-          this.actionExecutor.executeAction(data.action);
-        }
-      });
-      
-      this.newMessage = '';
-    }
+    this.lastMessage.set(this.userMessage.trim());
+    this.addMessage(this.lastMessage(), 'user');
+    this.userMessage = '';
   }
 
   private addMessage(message: string, by: 'user' | 'bot') {
-    const html = this.sanitizer.bypassSecurityTrustHtml(marked.parse(message) as string);
-    this.messages.update(messages => [
+    const html = this.sanitizer.bypassSecurityTrustHtml(
+      marked.parse(message) as string
+    );
+    this.messages.update((messages) => [
       ...messages,
-      { text: message, by, html }
+      { text: message, by, html },
     ]);
-    
+
     // Use requestAnimationFrame to ensure the DOM has updated
     requestAnimationFrame(() => {
       this.scrollToBottom();
     });
   }
-} 
+}

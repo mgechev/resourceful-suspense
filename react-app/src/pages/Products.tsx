@@ -1,47 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchInput from '../components/SearchInput';
 import SkeletonProductItem from '../components/SkeletonProductItem';
 import PriceTag from '../components/PriceTag';
 import ProductImage from '../components/ProductImage';
-import { mockApi, Product, Category } from '../services/mockApi';
+import { Product, Category } from '../api';
 import './Products.css';
 
-const Products: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface ProductsProps {
+  products: Product[];
+  categories: Category[];
+}
 
+const Products: React.FC<ProductsProps> = ({ products, categories }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('search') || '';
   const category = searchParams.get('category') || '';
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const [productsData, categoriesData] = await Promise.all([
-          mockApi.getProducts({ 
-            name: search,
-            categoryId: category,
-            pageSize: 10
-          }),
-          mockApi.getCategories()
-        ]);
-        setProducts(productsData);
-        setCategories(categoriesData);
-      } catch (err) {
-        setError('Failed to load products. Please try again later.');
-        console.error('Error loading products:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = search === '' || 
+      product.name.toLowerCase().includes(search.toLowerCase()) ||
+      product.description.toLowerCase().includes(search.toLowerCase());
+    
+    const matchesCategory = category === '' || 
+      product.category_ids.includes(category);
 
-    loadData();
-  }, [search, category]);
+    return matchesSearch && matchesCategory;
+  });
 
   const handleSearch = (value: string) => {
     setSearchParams(prev => {
@@ -65,13 +50,10 @@ const Products: React.FC = () => {
         </div>
         <SearchInput value={search} onChange={handleSearch} placeholder="Search products..." />
       </div>
-      {error && <div className="error-message">{error}</div>}
       <div className="main">
         <div className="products-grid">
-          {loading ? (
-            Array(3).fill(null).map((_, i) => <SkeletonProductItem key={i} />)
-          ) : products.length > 0 ? (
-            products.map(product => (
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map(product => (
               <div key={product.id} className="product-item">
                 <ProductImage product={product} size="md" />
                 <h3>{product.name}</h3>

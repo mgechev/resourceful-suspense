@@ -1,6 +1,3 @@
-.home {
-  padding: 20px;
-}
 .home-background {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1200x400');
   background-size: cover;

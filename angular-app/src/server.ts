@@ -9,12 +9,20 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promptModel } from './ai';
 import { getProducts, getProduct, getCategories } from './api';
+import cors from 'cors';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+
+// Enable CORS for the React app
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.get('/api/prompt', async (req, res) => {
   const prompt = req.query['prompt'] as string;

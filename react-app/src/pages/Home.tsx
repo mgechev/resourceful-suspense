@@ -33,7 +33,6 @@ const Home: React.FC = () => {
           <img
             className="bg-img"
             src="/gradient.jpg"
-            fetchPriority="high"
             draggable={false}
             alt="Background"
           />

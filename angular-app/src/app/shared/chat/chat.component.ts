@@ -2,13 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  ViewChild,
   signal,
   afterNextRender,
   input,
   viewChild,
-  resource,
-  linkedSignal,
   effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,7 +14,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { marked } from 'marked';
 import { Action, ActionExecutor } from './action-executor';
 import { httpResource } from '@angular/common/http';
-import { toObservable } from '@angular/core/rxjs-interop';
 
 interface ChatMessage {
   text: string;
@@ -61,14 +57,15 @@ interface Response {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatComponent {
-  messagesContainer = viewChild.required<ElementRef>('messagesContainer');
   name = input.required<string>();
-  messages = signal<ChatMessage[]>([]);
-  userMessage = '';
-  lastMessage = signal('');
-  isLoading = signal(false).asReadonly();
 
-  nextBotMessage = httpResource<Response>(() =>
+  protected messagesContainer = viewChild.required<ElementRef>('messagesContainer');
+  protected messages = signal<ChatMessage[]>([]);
+  protected userMessage = '';
+  protected lastMessage = signal('');
+  protected isLoading = signal(false).asReadonly();
+
+  protected nextBotMessage = httpResource<Response>(() =>
     this.lastMessage()
       ? `/api/prompt?prompt=${this.lastMessage()}&tech=angular&name=${this.name()}`
       : undefined

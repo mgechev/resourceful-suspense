@@ -17,7 +17,7 @@ export class CategoriesApi {
    * @returns All categories that the ecommerce web app has
    */
   async getCategories(): Promise<List<Category>> {
-    const response = await this._fetch(`${environment.apiUrl}/categories`);
+    const response = await this._fetch(`${environment.apiUrl}/categories?tech=angular`);
     const json = await response.json();
 
     return mapCategories(json);

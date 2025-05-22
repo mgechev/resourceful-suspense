@@ -8,6 +8,7 @@ import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promptModel } from './ai';
+import { getProducts, getProduct, getCategories } from './api';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -28,6 +29,39 @@ app.get('/api/user', async (_, res) => {
     name: 'John Doe',
     email: 'john.doe@example.com',
   });
+});
+
+app.get('/api/products', async (req, res) => {
+  const { categoryId, pageSize, page, name, sortBy, fromPrice, toPrice, batchIds, tech } = req.query;
+  const params = {
+    categoryId: categoryId as string,
+    pageSize: pageSize ? Number(pageSize) : undefined,
+    page: page ? Number(page) : undefined,
+    name: name as string,
+    sortBy: sortBy as 'price_asc' | 'price_desc',
+    fromPrice: fromPrice ? Number(fromPrice) : undefined,
+    toPrice: toPrice ? Number(toPrice) : undefined,
+    batchIds: batchIds ? (Array.isArray(batchIds) ? batchIds : [batchIds]) as string[] : undefined
+  };
+
+  const products = await getProducts(tech as 'angular' | 'react', params);
+  res.json(products);
+});
+
+app.get('/api/products/:id', async (req, res) => {
+  const { tech } = req.query;
+  const product = await getProduct(tech as 'angular' | 'react', req.params.id);
+  if (!product) {
+    res.status(404).json({ error: 'Product not found' });
+    return;
+  }
+  res.json(product);
+});
+
+app.get('/api/categories', async (req, res) => {
+  const tech = req.query['tech'] as 'angular' | 'react';
+  const categories = await getCategories(tech as 'angular' | 'react');
+  res.json(categories);
 });
 
 /**

@@ -38,6 +38,7 @@ export class ProductsApi {
       : null;
     const queryParams = buildQueryParamsString({
       pageSize: environment.productsListPageSize,
+      tech: 'angular',
       ...params,
     } as GetProductsParams);
 
@@ -61,7 +62,7 @@ export class ProductsApi {
    */
   async getProduct(id: string): Promise<Product> {
     const signal = this._abortIfInProgress(this.getProduct.name);
-    const response = await this._fetch(`${environment.apiUrl}/products/${id}`, {
+    const response = await this._fetch(`${environment.apiUrl}/products/${id}?tech=angular`, {
       signal,
     }).catch(() => {}); // Handle aborted requests
 

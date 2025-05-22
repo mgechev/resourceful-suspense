@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withNoHttpTransferCache()),
     // Drop the `withFetchMock` implementation argument in order to
     // perform actual network requests via the native Fetch API.
-    provideFetchApi(withFetchMock(ecommerceRequestResponseMock)),
+    provideFetchApi(),
     provideWindow(),
     CategoriesService,
     ProductsService,

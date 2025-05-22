@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchInput from '../components/SearchInput';
 import SkeletonProductItem from '../components/SkeletonProductItem';
 import PriceTag from '../components/PriceTag';
@@ -14,19 +14,9 @@ interface ProductsProps {
 
 const Products: React.FC<ProductsProps> = ({ products, categories }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const search = searchParams.get('search') || '';
   const category = searchParams.get('category') || '';
-
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = search === '' || 
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.description.toLowerCase().includes(search.toLowerCase());
-    
-    const matchesCategory = category === '' || 
-      product.category_ids.includes(category);
-
-    return matchesSearch && matchesCategory;
-  });
 
   const handleSearch = (value: string) => {
     setSearchParams(prev => {
@@ -39,31 +29,81 @@ const Products: React.FC<ProductsProps> = ({ products, categories }) => {
     });
   };
 
+  const handleCategoryChange = (categoryId: string) => {
+    setSearchParams(prev => {
+      if (categoryId) {
+        prev.set('category', categoryId);
+      } else {
+        prev.delete('category');
+      }
+      return prev;
+    });
+  };
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/products/${productId}`);
+  };
+
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = search
+      ? product.name.toLowerCase().includes(search.toLowerCase())
+      : true;
+    const matchesCategory = category
+      ? product.category_ids?.includes(category)
+      : true;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
-    <div className={styles.productsPage}>
-      <div className={styles.header}>
-        <div className={styles.topBar}>
-          <h2 className={styles.categoryName}>
-            {category ? categories.find(c => c.id === category)?.name || 'Products' : 'All Products'}
-          </h2>
-          {search && <h3 className={styles.searchTitle}>Search results for "{search}"</h3>}
+    <div className={styles.container}>
+      <div className={styles.filters}>
+        <SearchInput
+          value={search}
+          onChange={handleSearch}
+          placeholder="Search products..."
+        />
+        <div className={styles.categories}>
+          <button
+            className={`${styles.categoryButton} ${!category ? styles.active : ''}`}
+            onClick={() => handleCategoryChange('')}
+          >
+            All
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              className={`${styles.categoryButton} ${category === cat.id ? styles.active : ''}`}
+              onClick={() => handleCategoryChange(cat.id)}
+            >
+              {cat.name}
+            </button>
+          ))}
         </div>
-        <SearchInput value={search} onChange={handleSearch} placeholder="Search products..." />
       </div>
-      <div className={styles.main}>
-        <div className={styles.productsGrid}>
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map(product => (
-              <div key={product.id} className={styles.productItem}>
+
+      <div className={styles.products}>
+        {filteredProducts.length === 0 ? (
+          <div className={styles.noResults}>
+            <h2>No products found</h2>
+            <p>Try adjusting your search or filter criteria</p>
+          </div>
+        ) : (
+          filteredProducts.map(product => (
+            <div
+              key={product.id}
+              className={styles.productCard}
+              onClick={() => handleProductClick(product.id)}
+            >
+              <div className={styles.productImage}>
                 <ProductImage product={product} size="md" />
-                <h3>{product.name}</h3>
+              </div>
+              <div className={styles.productInfo}>
+                <h3 className={styles.productName}>{product.name}</h3>
                 <PriceTag product={product} />
               </div>
-            ))
-          ) : (
-            <div className={styles.noResults}>No products found</div>
-          )}
-        </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

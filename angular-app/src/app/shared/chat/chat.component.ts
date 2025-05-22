@@ -40,7 +40,13 @@ interface Response {
             [innerHTML]="message.html || message.text"
           ></div>
         </div>
-        } @if (nextBotMessage.isLoading()) { Typing... }
+        } @if (nextBotMessage.isLoading()) {
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        }
       </div>
       <div class="input-area">
         <input

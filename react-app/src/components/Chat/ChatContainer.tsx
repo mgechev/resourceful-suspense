@@ -12,7 +12,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ name }) => {
   return (
     <div className={`chat-container-wrapper ${isExpanded ? 'expanded' : ''}`}>
       <button className="chat-toggle" onClick={() => setIsExpanded(!isExpanded)}>
-        {isExpanded ? '▼' : '▲'} Chat with {name}
+        <div className="toggle-content">
+          <span>Chat with {name}</span>
+        </div>
+        <span className="toggle-icon">▼</span>
       </button>
       {isExpanded && (
         <div className="chat-content">

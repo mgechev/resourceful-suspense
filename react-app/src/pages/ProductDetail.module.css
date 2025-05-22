@@ -1,0 +1,202 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: #2b5278;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin-bottom: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.backButton:hover {
+  color: #346392;
+}
+
+.productDetail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.imageSection {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f9fafb;
+}
+
+.contentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.price {
+  font-size: 1.5rem;
+}
+
+.description {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.description h2 {
+  font-size: 1.25rem;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+}
+
+.features {
+  color: #4b5563;
+}
+
+.features h2 {
+  font-size: 1.25rem;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+}
+
+.features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.features li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.features li:last-child {
+  border-bottom: none;
+}
+
+.actions {
+  margin-top: 1rem;
+}
+
+.addToCartButton {
+  background-color: #2b5278;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.addToCartButton:hover:not(:disabled) {
+  background-color: #346392;
+  transform: translateY(-1px);
+}
+
+.addToCartButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.addToCartButton:disabled {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.error {
+  text-align: center;
+  padding: 3rem;
+  color: #4b5563;
+}
+
+.error h2 {
+  margin-bottom: 1.5rem;
+}
+
+/* Skeleton loading styles */
+.skeleton {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.skeletonImage {
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeletonContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.skeletonTitle {
+  height: 2.5rem;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  width: 80%;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeletonPrice {
+  height: 2rem;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  width: 40%;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeletonDescription {
+  height: 6rem;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  width: 100%;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .productDetail {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .skeleton {
+    grid-template-columns: 1fr;
+  }
+} 

@@ -1,63 +1,113 @@
-.productsPage {
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
 }
 
-.header {
+.filters {
   margin-bottom: 2rem;
 }
 
-.topBar {
+.categories {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.categoryButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.categoryButton:hover {
+  border-color: #2b5278;
+  color: #2b5278;
+}
+
+.categoryButton.active {
+  background-color: #2b5278;
+  color: white;
+  border-color: #2b5278;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.productCard {
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.productCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.productImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: #f9fafb;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.categoryName {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #333;
+.productImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 0.5rem;
 }
 
-.searchTitle {
-  margin: 0;
-  font-size: 1rem;
-  color: #666;
+.productInfo {
+  padding: 0.75rem;
 }
 
-.main {
-  margin-top: 2rem;
-}
-
-.productsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
-}
-
-.productItem {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.productItem:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.productItem h3 {
-  margin: 1rem 0;
-  font-size: 1.1rem;
-  color: #333;
+.productName {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.875rem;
+  color: #1f2937;
+  line-height: 1.4;
 }
 
 .noResults {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 2rem;
-  color: #666;
-  font-size: 1.2rem;
+  padding: 3rem;
+  color: #4b5563;
+}
+
+.noResults h2 {
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.noResults p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .products {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
 } 

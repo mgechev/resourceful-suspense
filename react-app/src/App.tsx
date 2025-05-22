@@ -4,61 +4,72 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Products from './pages/Products';
-import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
-import { CartProvider } from './context/CartContext';
+import ProductDetail from './pages/ProductDetail';
 import ChatContainer from './components/Chat/ChatContainer';
-import { getProducts, getCategories, Product, Category } from './api';
-import styles from './App.module.css';
+import { getProducts, getCategories } from './api';
+import { Product, Category } from './api';
+import { CartProvider } from './context/CartContext';
+import './App.css';
 
-const App: React.FC = () => {
+function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadData = async () => {
       try {
         const [productsData, categoriesData] = await Promise.all([
-          getProducts({}),
+          getProducts(),
           getCategories()
         ]);
         setProducts(productsData);
         setCategories(categoriesData);
       } catch (err) {
-        setError('Failed to fetch data');
-        console.error(err);
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    loadData();
   }, []);
 
-  if (loading) return <div className={styles.loading}>Loading...</div>;
-  if (error) return <div className={styles.error}>Error: {error}</div>;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
-    <CartProvider>
-      <Router>
-        <div className={styles.app}>
+    <Router>
+      <CartProvider>
+        <div className="app">
           <Header />
-          <main className={styles.main}>
+          <main className="main">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/products" element={<Products products={products} categories={categories} />} />
-              <Route path="/products/:id" element={<ProductDetails />} />
+              <Route 
+                path="/products" 
+                element={<Products products={products} categories={categories} />} 
+              />
+              <Route 
+                path="/products/:id" 
+                element={<ProductDetail />} 
+              />
               <Route path="/cart" element={<Cart />} />
             </Routes>
           </main>
           <Footer />
+          <ChatContainer name="React" />
         </div>
-      </Router>
-      <ChatContainer name="React" />
-    </CartProvider>
+      </CartProvider>
+    </Router>
   );
-};
+}
 
 export default App;

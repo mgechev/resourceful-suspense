@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CategoryReel from '../components/CategoryReel';
 import { mockApi, Category } from '../services/mockApi';
 import './Home.css';
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -26,45 +29,49 @@ const Home: React.FC = () => {
     loadCategories();
   }, []);
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <div className="home">
-      <section className="search">
-        <div className="bg">
-          <img
-            className="bg-img"
-            src="/gradient.jpg"
-            draggable={false}
-            alt="Background"
-          />
-        </div>
-        <div className="content">
-          <h2>Welcome to the React Store</h2>
-          <h3>An Ecommerce React template</h3>
-          <div className="search-form">
+      <section className="hero">
+        <div className="heroContent">
+          <h1 className="heroTitle">Welcome to React Shop</h1>
+          <p className="heroSubtitle">Discover amazing products at great prices</p>
+          <form className="searchForm" onSubmit={handleSearch}>
             <input
               type="text"
-              placeholder="Search for a product"
-              className="search-input"
+              className="searchInput"
+              placeholder="Search for products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button className="search-btn" title="Search">
-              <span>Search</span>
+            <button type="submit" className="searchButton">
+              Search
             </button>
-          </div>
+          </form>
         </div>
       </section>
-      <div className="spacer"></div>
-      {error && <div className="error-message">{error}</div>}
-      {loading ? (
-        <div className="loading">Loading categories...</div>
-      ) : (
-        categories.map((category, index) => (
-          <CategoryReel
-            key={category.id}
-            category={category}
-            isLcp={index === 0}
-          />
-        ))
-      )}
+
+      <section className="featuredSection">
+        <h2 className="sectionTitle">Featured Categories</h2>
+        {error && <div className="error-message">{error}</div>}
+        {loading ? (
+          <div className="loading">Loading categories...</div>
+        ) : (
+          categories.map((category, index) => (
+            <CategoryReel
+              key={category.id}
+              category={category}
+              isLcp={index === 0}
+            />
+          ))
+        )}
+      </section>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Product } from '../services/mockApi';
+import { Product } from '../services/api-interfaces';
 import './ProductItem.css';
 
 export interface ProductItemProps {

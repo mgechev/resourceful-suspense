@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Category, Product, mockApi } from '../services/mockApi';
+import { Category, Product } from '../services/api-interfaces';
 import ProductItem from './ProductItem';
 import './CategoryReel.css';
 
@@ -19,10 +19,7 @@ const CategoryReel: React.FC<CategoryReelProps> = ({ category, isLcp = false }) 
       try {
         setLoading(true);
         setError(null);
-        const productsData = await mockApi.getProducts({
-          categoryId: category.id,
-          pageSize: 5
-        });
+        const productsData = await fetch(`http://localhost:4200/api/products?categoryId=${category.id}&pageSize=5&tech=react`).then(res => res.json());
         setProducts(productsData);
       } catch (err) {
         setError('Failed to load products. Please try again later.');

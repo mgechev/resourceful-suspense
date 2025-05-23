@@ -4,7 +4,7 @@ import ProductImage from '../components/ProductImage';
 import PriceTag from '../components/PriceTag';
 import ExpandableContainer from '../components/ExpandableContainer';
 import { useCart } from '../context/CartContext';
-import { mockApi, Product } from '../services/mockApi';
+import { Product } from '../services/api-interfaces';
 import './ProductDetails.css';
 
 const ProductDetails: React.FC = () => {
@@ -22,7 +22,7 @@ const ProductDetails: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const productData = await mockApi.getProduct(id);
+        const productData = await fetch(`http://localhost:4200/api/products/${id}?tech=react`).then(res => res.json());
         if (productData) {
           setProduct(productData);
         } else {

@@ -1,6 +1,6 @@
 import React, { use } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Product } from '../services/mockApi';
+import { Product } from '../services/api-interfaces';
 import ProductImage from './ProductImage';
 import PriceTag from './PriceTag';
 import styles from './RecommendedProducts.module.css';

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Product } from '../services/mockApi';
-import { mockApi } from '../services/mockApi';
+import { Product } from '../services/api-interfaces';
 import ProductImage from '../components/ProductImage';
 import PriceTag from '../components/PriceTag';
 import { useCart } from '../context/CartContext';
@@ -24,7 +23,7 @@ const ProductDetail: React.FC = () => {
       }
 
       try {
-        const productData = await mockApi.getProduct(id);
+        const productData = await fetch(`http://localhost:4200/api/products/${id}?tech=react`).then(res => res.json());
         if (!productData) {
           setError('Product not found');
         } else {

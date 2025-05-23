@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { httpResource } from '@angular/common/http';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { Product } from '../../../../models/product';
+import { createProductUrl } from '../../utils/create-product-url';
 
 @Component({
   selector: 'ec-recommended-products',
@@ -12,15 +13,12 @@ import { Product } from '../../../../models/product';
   imports: [CurrencyPipe]
 })
 export class EcRecommendedProductsComponent {
-  error: string | null = null;
+  protected error: string | null = null;
+  protected recommendationsResource = httpResource<Product[]>(() => `/api/recommended-products?tech=angular`);
 
-  recommendationsResource = httpResource<Product[]>(() => `/api/recommended-products?tech=angular`);
+  private router = inject(Router);
 
-  constructor(
-    private router: Router
-  ) {}
-
-  onProductClick(productId: string): void {
-    this.router.navigate(['/products', productId]);
+  onProductClick(product: Product): void {
+    this.router.navigate(createProductUrl(product));
   }
 } 

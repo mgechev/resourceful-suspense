@@ -16,7 +16,7 @@
   } @else {
     <div class="products">
       @for (product of recommendationsResource.value(); track product.id) {
-        <div class="product-card" (click)="onProductClick(product.id)">
+        <div class="product-card" (click)="onProductClick(product)">
           <div class="image-container">
             <img [src]="product.images[0]!" [alt]="product.name">
           </div>

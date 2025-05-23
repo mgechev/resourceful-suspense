@@ -2,7 +2,7 @@
   <a [routerLink]="productUrl()" class="product-link">
     <div class="img-cont">
       <ec-product-image
-        [src]="product().images.first() || ''"
+        [src]="product().images[0]!"
         size="xs 400w, sm"
         alt="Product image"
       />

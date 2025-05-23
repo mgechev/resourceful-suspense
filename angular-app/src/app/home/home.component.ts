@@ -11,6 +11,7 @@ import { CategoriesService } from '../data-access/categories.service';
 import { ScrollPosition } from '../shared/scroll-position.service';
 import { isProductDetailsRoute } from '../shared/utils/routing';
 import { maintainScrollPosEffect } from '../shared/utils/maintain-scroll-pos-effect';
+import { EcRecommendedProductsComponent } from '../shared/components/ec-recommended-products/ec-recommended-products.component';
 
 // Limit the number of categories
 // that are shown on the home page.
@@ -18,7 +19,11 @@ const CATEGORY_REELS_COUNT = 3;
 
 @Component({
   selector: 'ec-home',
-  imports: [AutocompleteProductSearchComponent, CategoryReelComponent],
+  imports: [
+    AutocompleteProductSearchComponent,
+    CategoryReelComponent,
+    EcRecommendedProductsComponent,
+  ],
   providers: [ScrollPosition],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -28,7 +33,7 @@ export class HomeComponent {
   private _categories = inject(CategoriesService);
 
   categories = computed(() =>
-    this._categories.categoriesList().take(CATEGORY_REELS_COUNT),
+    this._categories.categoriesList().take(CATEGORY_REELS_COUNT)
   );
 
   constructor() {

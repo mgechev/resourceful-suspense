@@ -46,7 +46,7 @@
       <ec-skeleton-product-item />
     }
   </div>
-  @if (!productsList.value().size && productsList.isLoaded()) {
+  @if (!productsList.value().length && productsList.isLoaded()) {
     <p class="no-results">No results</p>
   }
   @if (!productsList.isComplete()) {

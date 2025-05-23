@@ -22,7 +22,7 @@ export class ImageGalleryComponent {
   selectedImgIdx = signal<number>(0);
 
   selectedImg = computed(
-    () => this.product().images.get(this.selectedImgIdx()) || '',
+    () => this.product().images[this.selectedImgIdx()] || '',
   );
 
   switchImage(idx: number) {

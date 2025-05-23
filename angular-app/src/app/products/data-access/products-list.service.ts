@@ -1,5 +1,4 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { List } from 'immutable';
 
 import { GetProductsParams, ProductsApi } from '../../api/products-api.service';
 import { Product } from '../../../models';
@@ -11,7 +10,7 @@ import { environment } from '../../../environments/environment';
 @Injectable()
 export class ProductsListService {
   private _productsApi = inject(ProductsApi);
-  private _products = signal<List<Product>>(List([]));
+  private _products = signal<Product[]>([]);
   private _isComplete = signal<boolean>(false);
   private _isLoaded = signal<boolean>(false);
   private _isLoading = signal<'update' | 'reload' | 'no'>('no');
@@ -45,7 +44,7 @@ export class ProductsListService {
     }
 
     this._isLoaded.set(true);
-    this._isComplete.set(products.size < environment.productsListPageSize);
+    this._isComplete.set(products.length < environment.productsListPageSize);
     this._lastOptions = options || {};
   }
 

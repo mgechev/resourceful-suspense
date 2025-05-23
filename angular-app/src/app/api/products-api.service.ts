@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { List } from 'immutable';
 import { FETCH_API, fetchAbort } from '@ngx-templates/shared/fetch';
 import { buildQueryParamsString } from '@ngx-templates/shared/utils';
 
@@ -32,7 +31,7 @@ export class ProductsApi {
   async getProducts(
     params?: GetProductsParams,
     abortIfInProgress: boolean = true,
-  ): Promise<List<Product>> {
+  ): Promise<Product[]> {
     const signal = abortIfInProgress
       ? this._abortIfInProgress(this.getProducts.name)
       : null;

@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { List } from 'immutable';
 import { FETCH_API } from '@ngx-templates/shared/fetch';
 
 import { Category } from '../../models';
@@ -16,7 +15,7 @@ export class CategoriesApi {
    *
    * @returns All categories that the ecommerce web app has
    */
-  async getCategories(): Promise<List<Category>> {
+  async getCategories(): Promise<Category[]> {
     const response = await this._fetch(`${environment.apiUrl}/categories?tech=angular`);
     const json = await response.json();
 

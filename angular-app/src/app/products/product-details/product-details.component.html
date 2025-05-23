@@ -24,7 +24,7 @@
   <ec-add-to-cart-btn [product]="product()" />
   <hr />
   <p class="description">{{ product().description }}</p>
-  @if (product().parameters.size) {
+  @if (product().parameters.length) {
     <hr class="params-hr" />
     <table class="parameters">
       <tbody>

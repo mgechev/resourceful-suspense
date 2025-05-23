@@ -19,3 +19,5 @@
 @for (category of categories(); track category.id; let i = $index) {
   <ec-category-reel [category]="category" [isLcp]="i === 0" />
 }
+
+<ec-recommended-products />

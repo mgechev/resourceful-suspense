@@ -1,5 +1,5 @@
 <div class="selected">
-  @if (product().images.size > 1) {
+  @if (product().images.length > 1) {
     <button
       class="nav-btn prev"
       [disabled]="selectedImgIdx() === 0"
@@ -16,10 +16,10 @@
     size="xlg"
     aria-label="Selected image"
   />
-  @if (product().images.size > 1) {
+  @if (product().images.length > 1) {
     <button
       class="nav-btn next"
-      [disabled]="selectedImgIdx() === product().images.size - 1"
+      [disabled]="selectedImgIdx() === product().images.length - 1"
       (click)="moveImage(1)"
       title="Next image"
     >
@@ -27,7 +27,7 @@
     </button>
   }
 </div>
-@if (product().images.size > 1) {
+@if (product().images.length > 1) {
   <div class="images">
     @for (img of product().images; track img; let idx = $index) {
       <button

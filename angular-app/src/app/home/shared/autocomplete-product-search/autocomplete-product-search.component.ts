@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { List } from 'immutable';
 
 import { SearchInputComponent } from '../../../shared/search-input/search-input.component';
 import { ProductsApi } from '../../../api/products-api.service';
@@ -55,7 +54,7 @@ export class AutocompleteProductSearchComponent {
 
   private _inFocus = signal<boolean>(false);
   private _searchActive = signal<boolean>(false);
-  products = signal<List<Product>>(List([]));
+  products = signal<Product[]>([]);
   focusedResult = signal<number>(-1);
   showResults = computed(() => this._inFocus() && this._searchActive());
 
@@ -81,7 +80,7 @@ export class AutocompleteProductSearchComponent {
 
   @HostListener('document:keydown', ['$event'])
   onDocumentKeydown(e: KeyboardEvent) {
-    if (!this.showResults() || !this.products().size) {
+    if (!this.showResults() || !this.products().length) {
       return;
     }
 
@@ -91,7 +90,7 @@ export class AutocompleteProductSearchComponent {
       const newIdx = this.focusedResult() + move;
 
       this.focusedResult.set(
-        newIdx >= 0 ? newIdx % this.products().size : this.products().size - 1,
+        newIdx >= 0 ? newIdx % this.products().length : this.products().length - 1,
       );
     }
   }
@@ -114,14 +113,14 @@ export class AutocompleteProductSearchComponent {
     this.focusedResult.set(-1);
 
     if (searchTerm.length < SEARCH_AFTER_CHAR) {
-      this.products.set(List([]));
+      this.products.set([]);
       this._searchActive.set(false);
     } else {
       const products = await this.productsApi.getProducts({
         name: searchTerm,
         pageSize: MAX_RESULTS,
       });
-      this.products.set(products);
+      this.products.set(products || []);
       this._searchActive.set(true);
     }
   }

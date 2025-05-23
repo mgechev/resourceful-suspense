@@ -7,7 +7,6 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { List } from 'immutable';
 
 import { ProductItemComponent } from '../../../shared/product-item/product-item.component';
 import { Category, Product } from '../../../../models';
@@ -28,7 +27,7 @@ export class CategoryReelComponent implements OnInit {
   category = input.required<Category>();
   isLcp = input<boolean>(false);
 
-  products = signal<List<Product>>(List([]));
+  products = signal<Product[]>([]);
 
   async ngOnInit() {
     const products = await this._productsApi.getProducts(
@@ -38,6 +37,6 @@ export class CategoryReelComponent implements OnInit {
       },
       false,
     );
-    this.products.set(products);
+    this.products.set(products || []);
   }
 }

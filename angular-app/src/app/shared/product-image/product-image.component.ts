@@ -108,7 +108,7 @@ export class ProductImageComponent {
   priority = input<boolean>(false);
 
   baseSrc = computed<string>(
-    () => (this.product() ? this.product()?.images.first() : this.src()) || '',
+    () => (this.product() ? this.product()?.images[0] : this.src()) || '',
   );
 
   sizes = computed<[ImageSize, ScreenBreakpoint][]>(

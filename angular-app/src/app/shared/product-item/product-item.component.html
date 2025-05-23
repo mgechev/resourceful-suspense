@@ -11,7 +11,7 @@
       {{ product().name }}
     </p>
     <div class="categories" aria-label="Categories">
-      <span class="ec-chip">{{ categories().toArray().join(', ') }}</span>
+      <span class="ec-chip">{{ categories().join(', ') }}</span>
     </div>
     @if (product().availability !== 'none') {
       <div class="price-row">

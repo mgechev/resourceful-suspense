@@ -38,7 +38,7 @@ const RecommendedProducts: React.FC = () => {
   if (loading) {
     return (
       <div className={styles.container}>
-        <h2 className={styles.title}>Recommended Products</h2>
+        <h2 className={styles.title}>Sponsored recommendations</h2>
         <div className={styles.products}>
           {[...Array(4)].map((_, index) => (
             <div key={index} className={styles.skeleton}>

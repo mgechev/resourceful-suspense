@@ -1,0 +1,31 @@
+<div class="container">
+  <h2 class="title">Sponsored recommendations</h2>
+  
+  @if (recommendationsResource.isLoading()) {
+    <div class="products">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="skeleton">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-price"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="products">
+      @for (product of recommendationsResource.value(); track product.id) {
+        <div class="product-card" (click)="onProductClick(product.id)">
+          <div class="image-container">
+            <img [src]="product.images[0]!" [alt]="product.name">
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">{{ product.name }}</h3>
+            <div class="price">{{ product.price | currency }}</div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div> 

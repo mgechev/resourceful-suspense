@@ -5,20 +5,39 @@ import { Category, ChatResponse, Product } from "./api";
 import { useCategoriesStore } from "../stores/categoriesStore";
 import { GetProductsParams } from "./api";
 
+// Cache for storing promises and their results
+const promiseCache = new Map<string, Promise<any>>();
+
+// Helper to generate cache keys
+function getCacheKey(fn: string, params?: Record<string, any>): string {
+  if (!params) return fn;
+  return `${fn}:${JSON.stringify(params)}`;
+}
+
 // Custom hooks that use the API service
 export function useGetProducts(): (params?: GetProductsParams) => Promise<Product[]> {
   const productStore = useProductsStore();
   const apiService = useContext(ApiContext);
   
   return async (params?: GetProductsParams) => {
-    const cachedProducts = productStore.getProductsForCategory(params?.categoryId || '');
-    if (cachedProducts.length > 0) {
-      return cachedProducts;
+    const cacheKey = getCacheKey('getProducts', params);
+    if (promiseCache.has(cacheKey)) {
+      return promiseCache.get(cacheKey);
     }
-    
-    const products = await apiService.getProducts(params);
-    productStore.setProducts(products);
-    return products;
+
+    const promise = (async () => {
+      const cachedProducts = productStore.getProductsForCategory(params?.categoryId || '');
+      if (cachedProducts.length > 0) {
+        return cachedProducts;
+      }
+      
+      const products = await apiService.getProducts(params);
+      productStore.setProducts(products);
+      return products;
+    })();
+
+    promiseCache.set(cacheKey, promise);
+    return promise;
   };
 }
 
@@ -27,16 +46,26 @@ export function useGetProduct(): (id: string) => Promise<Product|null> {
   const apiService = useContext(ApiContext);
   
   return async (id: string) => {
-    const cachedProduct = productStore.getProduct(id);
-    if (cachedProduct) {
-      return cachedProduct;
+    const cacheKey = getCacheKey('getProduct', { id });
+    if (promiseCache.has(cacheKey)) {
+      return promiseCache.get(cacheKey);
     }
-    
-    const product = await apiService.getProduct(id);
-    if (product) {
-      productStore.setProducts([product]);
-    }
-    return product;
+
+    const promise = (async () => {
+      const cachedProduct = productStore.getProduct(id);
+      if (cachedProduct) {
+        return cachedProduct;
+      }
+      
+      const product = await apiService.getProduct(id);
+      if (product) {
+        productStore.setProducts([product]);
+      }
+      return product;
+    })();
+
+    promiseCache.set(cacheKey, promise);
+    return promise;
   };
 }
 
@@ -45,13 +74,23 @@ export function useGetCategories(): () => Promise<Category[]> {
   const apiService = useContext(ApiContext);
   
   return async () => {
-    if (categoriesStore.categories.length > 0) {
-      return categoriesStore.categories;
+    const cacheKey = getCacheKey('getCategories');
+    if (promiseCache.has(cacheKey)) {
+      return promiseCache.get(cacheKey);
     }
-    
-    const categories = await apiService.getCategories();
-    categoriesStore.setCategories(categories);
-    return categories;
+
+    const promise = (async () => {
+      if (categoriesStore.categories.length > 0) {
+        return categoriesStore.categories;
+      }
+      
+      const categories = await apiService.getCategories();
+      categoriesStore.setCategories(categories);
+      return categories;
+    })();
+
+    promiseCache.set(cacheKey, promise);
+    return promise;
   };
 }
 
@@ -59,7 +98,14 @@ export function useGetRecommendedProducts(): () => Promise<Product[]> {
   const apiService = useContext(ApiContext);
 
   return async () => {
-    return apiService.getRecommendedProducts();
+    const cacheKey = getCacheKey('getRecommendedProducts');
+    if (promiseCache.has(cacheKey)) {
+      return promiseCache.get(cacheKey);
+    }
+
+    const promise = apiService.getRecommendedProducts();
+    promiseCache.set(cacheKey, promise);
+    return promise;
   };
 }
 
@@ -67,6 +113,13 @@ export function useSendMessage(): (message: string) => Promise<ChatResponse> {
   const apiService = useContext(ApiContext);
 
   return async (message: string) => {
-    return apiService.sendMessage(message);
+    const cacheKey = getCacheKey('sendMessage', { message });
+    if (promiseCache.has(cacheKey)) {
+      return promiseCache.get(cacheKey);
+    }
+
+    const promise = apiService.sendMessage(message);
+    promiseCache.set(cacheKey, promise);
+    return promise;
   };
 }

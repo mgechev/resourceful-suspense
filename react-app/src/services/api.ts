@@ -44,22 +44,9 @@ export interface ChatResponse {
 
 const API_URL = 'http://localhost:4200/api';
 
-// Cache for storing promises and their results
-const promiseCache = new Map<string, Promise<any>>();
-
-// Helper to generate cache keys
-function getCacheKey(fn: string, params?: Record<string, any>): string {
-  if (!params) return fn;
-  return `${fn}:${JSON.stringify(params)}`;
-}
-
 // Base API service without hooks
 const apiService = {
   async getProducts(params?: GetProductsParams): Promise<Product[]> {
-    const cacheKey = getCacheKey('getProducts', params);
-    if (promiseCache.has(cacheKey)) {
-      return promiseCache.get(cacheKey);
-    }
 
     const promise = (async () => {
       const queryParams = new URLSearchParams();
@@ -83,16 +70,10 @@ const apiService = {
       return response.json();
     })();
 
-    promiseCache.set(cacheKey, promise);
     return promise;
   },
 
   async getProduct(id: string): Promise<Product|null> {
-    const cacheKey = getCacheKey('getProduct', { id });
-    if (promiseCache.has(cacheKey)) {
-      return promiseCache.get(cacheKey);
-    }
-
     const promise = (async () => {
       const response = await fetch(`${API_URL}/products/${id}?tech=react`);
       if (!response.ok) {
@@ -101,16 +82,10 @@ const apiService = {
       return response.json();
     })();
 
-    promiseCache.set(cacheKey, promise);
     return promise;
   },
 
   async getCategories(): Promise<Category[]> {
-    const cacheKey = getCacheKey('getCategories');
-    if (promiseCache.has(cacheKey)) {
-      return promiseCache.get(cacheKey);
-    }
-
     const promise = (async () => {
       const response = await fetch(`${API_URL}/categories?tech=react`);
       if (!response.ok) {
@@ -119,16 +94,10 @@ const apiService = {
       return response.json();
     })();
 
-    promiseCache.set(cacheKey, promise);
     return promise;
   },
 
   async sendMessage(message: string): Promise<ChatResponse> {
-    const cacheKey = getCacheKey('sendMessage', { message });
-    if (promiseCache.has(cacheKey)) {
-      return promiseCache.get(cacheKey);
-    }
-
     const promise = (async () => {
       const response = await fetch(`http://localhost:4200/api/prompt?prompt=${message}&tech=react&name=React`);
       if (!response.ok) {
@@ -137,16 +106,10 @@ const apiService = {
       return response.json();
     })();
 
-    promiseCache.set(cacheKey, promise);
     return promise;
   },
 
   async getRecommendedProducts(): Promise<Product[]> {
-    const cacheKey = getCacheKey('getRecommendedProducts');
-    if (promiseCache.has(cacheKey)) {
-      return promiseCache.get(cacheKey);
-    }
-
     const promise = (async () => {
       const response = await fetch(`${API_URL}/recommended-products?tech=react`);
       if (!response.ok) {
@@ -155,7 +118,6 @@ const apiService = {
       return response.json();
     })();
 
-    promiseCache.set(cacheKey, promise);
     return promise;
   },
 };

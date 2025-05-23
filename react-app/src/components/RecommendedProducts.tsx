@@ -1,41 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { use } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../services/mockApi';
-import { mockApi } from '../services/mockApi';
 import ProductImage from './ProductImage';
 import PriceTag from './PriceTag';
 import styles from './RecommendedProducts.module.css';
 
+let productsPromise: Promise<Product[]> | null = null;
+
+const getProducts = () => {
+  if (!productsPromise) {
+    productsPromise = fetch('http://localhost:4200/api/recommended-products?tech=react').then(res => res.json());
+  }
+  return productsPromise;
+};
+
 const RecommendedProducts: React.FC = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadRecommendedProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const products = await fetch('http://localhost:4200/api/recommended-products?tech=react');
-        const data = await products.json();
-        setProducts(data);
-      } catch (err) {
-        setError('Failed to load recommended products');
-        console.error('Error loading recommended products:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadRecommendedProducts();
-  }, []);
+  const products = use(getProducts());
 
   const handleProductClick = (productId: string) => {
     navigate(`/products/${productId}`);
   };
 
-  if (loading) {
+  if (!products) {
     return (
       <div className={styles.container}>
         <h2 className={styles.title}>Sponsored recommendations</h2>
@@ -54,13 +41,9 @@ const RecommendedProducts: React.FC = () => {
     );
   }
 
-  if (error) {
-    return null; // Don't show anything if there's an error
-  }
-
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Recommended Products</h2>
+      <h2 className={styles.title}>Sponsored recommendations</h2>
       <div className={styles.products}>
         {products.map((product) => (
           <div

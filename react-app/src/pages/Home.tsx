@@ -16,6 +16,12 @@ const Home: React.FC = () => {
   const recommendedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    requestIdleCallback(() => {
+      import('../components/RecommendedProducts').catch(console.error);
+    });
+  }, []);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

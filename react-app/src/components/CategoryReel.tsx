@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Category, Product } from '../services/api-interfaces';
 import ProductItem from './ProductItem';
+import { useProductsStore } from '../stores/productsStore';
 import './CategoryReel.css';
 
 export interface CategoryReelProps {
@@ -10,17 +11,23 @@ export interface CategoryReelProps {
 }
 
 const CategoryReel: React.FC<CategoryReelProps> = ({ category, isLcp = false }) => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { getProducts, setProducts } = useProductsStore();
+  const products = getProducts(category.id);
 
   useEffect(() => {
     const loadProducts = async () => {
+      if (products.length > 0) {
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
         const productsData = await fetch(`http://localhost:4200/api/products?categoryId=${category.id}&pageSize=5&tech=react`).then(res => res.json());
-        setProducts(productsData);
+        setProducts(category.id, productsData);
       } catch (err) {
         setError('Failed to load products. Please try again later.');
         console.error('Error loading products:', err);
@@ -30,7 +37,7 @@ const CategoryReel: React.FC<CategoryReelProps> = ({ category, isLcp = false }) 
     };
 
     loadProducts();
-  }, [category.id]);
+  }, [category.id, products.length, setProducts]);
 
   return (
     <div className="category-reel">

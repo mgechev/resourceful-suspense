@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { marked } from 'marked';
 import { useCart } from '../../context/CartContext';
+import { useProductsStore } from '../../stores/productsStore';
+import { chatService } from '../../services/chatService';
 import styles from './Chat.module.css';
 
 interface ChatMessage {
@@ -14,6 +16,7 @@ const Chat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { addToCart } = useCart();
+  const { getAllProducts, setProducts } = useProductsStore();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -28,26 +31,37 @@ const Chat: React.FC = () => {
 
     const userMessage = input.trim();
     setInput('');
-    setMessages((prev: ChatMessage[]) => [...prev, { text: userMessage, by: 'user' }]);
+    setMessages((prev) => [...prev, { text: userMessage, by: 'user' }]);
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4200/api/prompt?prompt=' + userMessage + '&tech=react&name=React');
+      const data = await chatService.sendMessage(userMessage);
+      setMessages((prev) => [...prev, { text: data.message, by: 'bot' }]);
 
-      if (!response.ok) {
-        throw new Error('Failed to get response');
+      if (!data.action || data.action.type !== 'addToCart') {
+        return;
       }
 
-      const data = await response.json();
-      setMessages((prev: ChatMessage[]) => [...prev, { text: data.message, by: 'bot' }]);
-      if (data.action && data.action.type === 'addToCart') {
-        for (let i = 0; i < data.action.params.quantity; i++) {
-          addToCart(data.action.params.product);
+      let allProducts = getAllProducts();
+      if (!Object.keys(allProducts).length) {
+        const products = await chatService.fetchProducts();
+        const productsPerCategory = chatService.groupProductsByCategory(products);
+        
+        for (const [categoryId, products] of Object.entries(productsPerCategory)) {
+          setProducts(categoryId, products);
         }
+        allProducts = getAllProducts();
       }
+
+      const product = Object.values(allProducts).flat().find(p => p.id === data.action?.params.id);
+      if (!product) {
+        return;
+      }
+
+      addToCart({...product, quantity: data.action.params.quantity});
     } catch (error) {
       console.error('Error:', error);
-      setMessages((prev: ChatMessage[]) => [...prev, { text: 'Sorry, I encountered an error.', by: 'bot' }]);
+      setMessages((prev) => [...prev, { text: 'Sorry, I encountered an error.', by: 'bot' }]);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +78,7 @@ const Chat: React.FC = () => {
     <div className={styles.chatContainer}>
       <div className={styles.chatContent}>
         <div className={styles.messages}>
-          {messages.map((message: ChatMessage, index: number) => (
+          {messages.map((message, index) => (
             <div 
               key={index} 
               className={`${styles.message} ${message.by === 'user' ? styles.userMessage : styles.botMessage}`}

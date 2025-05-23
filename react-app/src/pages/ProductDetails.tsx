@@ -39,7 +39,7 @@ const ProductDetails: React.FC = () => {
     };
 
     loadProduct();
-  }, [id]);
+  }, [id, getProduct]);
 
   const handleAddToCart = () => {
     if (!product) return;

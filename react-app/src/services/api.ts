@@ -1,8 +1,3 @@
-import { useContext } from "react";
-import { ApiContext } from "../context/ApiContext";
-import { useCategoriesStore } from "../stores/categoriesStore";
-import { useProductsStore } from "../stores/productsStore";
-
 export interface Product {
   id: string;
   name: string;

@@ -1,5 +1,4 @@
 import React, { Suspense, useState } from 'react';
-import Chat from './Chat';
 import './ChatContainer.css';
 
 interface ChatContainerProps {

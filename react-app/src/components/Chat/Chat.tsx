@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { marked } from 'marked';
 import { useCart } from '../../context/CartContext';
 import styles from './Chat.module.css';
-import { ApiContext } from '../../context/ApiContext';
 
 import { useGetProduct, useSendMessage } from '../../services/async-state';
 interface ChatMessage {

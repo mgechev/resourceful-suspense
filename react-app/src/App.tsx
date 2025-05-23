@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -33,7 +33,7 @@ function App() {
       setError('Failed to load data');
       console.error('Error loading data:', err);
     });
-  }, []);
+  }, [getProducts, getCategories]);
 
   if (loading) {
     return <div>Loading...</div>;

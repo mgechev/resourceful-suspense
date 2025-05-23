@@ -1,22 +1,36 @@
-import React, { use } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Product } from '../services/api-interfaces';
 import ProductImage from './ProductImage';
 import PriceTag from './PriceTag';
 import styles from './RecommendedProducts.module.css';
-
-let productsPromise: Promise<Product[]> | null = null;
-
-const getProducts = () => {
-  if (!productsPromise) {
-    productsPromise = fetch('http://localhost:4200/api/recommended-products?tech=react').then(res => res.json());
-  }
-  return productsPromise;
-};
+import { Product } from '../services/api';
+import { ApiContext } from '../context/ApiContext';
 
 const RecommendedProducts: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const { getRecommendedProducts } = useContext(ApiContext);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const productsData = await getRecommendedProducts();
+        setProducts(productsData);
+      } catch (err) {
+        setError('Failed to load products. Please try again later.');
+        console.error('Error loading products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, [getRecommendedProducts]);
+
   const navigate = useNavigate();
-  const products = use(getProducts());
 
   const handleProductClick = (productId: string) => {
     navigate(`/products/${productId}`);
@@ -44,23 +58,31 @@ const RecommendedProducts: React.FC = () => {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Sponsored recommendations</h2>
-      <div className={styles.products}>
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className={styles.productCard}
-            onClick={() => handleProductClick(product.id)}
-          >
-            <div className={styles.imageContainer}>
-              <ProductImage product={product} size="md" />
+      {error && <div className={styles.errorMessage}>{error}</div>}
+      {loading ? (
+        <div className={styles.loading}>Loading products...</div>
+      ) : (
+        <div className={styles.products}>
+          {products.map((product: Product) => (
+            <div
+              key={product.id}
+              className={styles.productCard}
+              onClick={() => handleProductClick(product.id)}
+            >
+              <div className={styles.imageContainer}>
+                <ProductImage
+                  product={product}
+                  size="md"
+                />
+              </div>
+              <div className={styles.productInfo}>
+                <h3 className={styles.productName}>{product.name}</h3>
+                <PriceTag product={product} />
+              </div>
             </div>
-            <div className={styles.productInfo}>
-              <h3 className={styles.productName}>{product.name}</h3>
-              <PriceTag product={product} />
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

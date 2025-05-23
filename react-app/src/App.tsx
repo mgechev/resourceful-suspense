@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -7,35 +7,35 @@ import Products from './pages/Products';
 import Cart from './pages/Cart';
 import ProductDetail from './pages/ProductDetail';
 import ChatContainer from './components/Chat/ChatContainer';
-import { getProducts, getCategories } from './api';
-import { Product, Category } from './api';
 import { CartProvider } from './context/CartContext';
 import './App.css';
+import { Category, Product } from './services/api';
+import { ApiContext } from './context/ApiContext';
 
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { getProducts, getCategories } = useContext(ApiContext);
+  const productsPromise = getProducts();
+  const categoriesPromise = getCategories();
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [productsData, categoriesData] = await Promise.all([
-          getProducts(),
-          getCategories()
-        ]);
-        setProducts(productsData);
-        setCategories(categoriesData);
-      } catch (err) {
-        setError('Failed to load data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
+    Promise.all([
+      productsPromise,
+      categoriesPromise
+    ])
+    .then(([productsData, categoriesData]) => {
+      setProducts(productsData);
+      setCategories(categoriesData);
+      setLoading(false);
+    })
+    .catch((err) => {
+      setError('Failed to load data');
+      console.error('Error loading data:', err);
+    });
+  }, [productsPromise, categoriesPromise]);
 
   if (loading) {
     return <div>Loading...</div>;

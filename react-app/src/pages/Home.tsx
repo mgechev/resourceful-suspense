@@ -1,13 +1,15 @@
 import React, { lazy, useState, useEffect, Suspense, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryReel from '../components/CategoryReel';
-import { Category } from '../services/api-interfaces';
 import './Home.css';
+import { Category } from '../services/api';
+import { useGetCategories } from '../services/api';
 
 const LazyRecommendedProducts = lazy(() => import('../components/RecommendedProducts'));
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const getCategories = useGetCategories();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ const Home: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const categoriesData = await fetch('http://localhost:4200/api/categories?tech=react').then(res => res.json());
+        const categoriesData = await getCategories();
         setCategories(categoriesData);
       } catch (err) {
         setError('Failed to load categories. Please try again later.');
@@ -55,7 +57,7 @@ const Home: React.FC = () => {
     };
 
     loadCategories();
-  }, []);
+  }, [getCategories]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

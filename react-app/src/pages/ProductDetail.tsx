@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Product } from '../services/api-interfaces';
 import ProductImage from '../components/ProductImage';
 import PriceTag from '../components/PriceTag';
 import { useCart } from '../context/CartContext';
 import styles from './ProductDetail.module.css';
+import { Product } from '../services/api';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -94,23 +94,12 @@ const ProductDetail: React.FC = () => {
               <p>{product.description}</p>
             </div>
           )}
-          {product.features && product.features.length > 0 && (
-            <div className={styles.features}>
-              <h2>Features</h2>
-              <ul>
-                {product.features.map((feature, index) => (
-                  <li key={index}>{feature}</li>
-                ))}
-              </ul>
-            </div>
-          )}
           <div className={styles.actions}>
             <button 
               onClick={handleAddToCart}
               className={styles.addToCartButton}
-              disabled={!product.inStock}
             >
-              {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+              Add to Cart
             </button>
           </div>
         </div>

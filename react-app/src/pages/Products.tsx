@@ -4,7 +4,7 @@ import SearchInput from '../components/SearchInput';
 import SkeletonProductItem from '../components/SkeletonProductItem';
 import PriceTag from '../components/PriceTag';
 import ProductImage from '../components/ProductImage';
-import { Product, Category } from '../api';
+import { Product, Category } from '../services/api';
 import styles from './Products.module.css';
 
 interface ProductsProps {

@@ -4,7 +4,7 @@ import ProductImage from '../components/ProductImage';
 import PriceTag from '../components/PriceTag';
 import ExpandableContainer from '../components/ExpandableContainer';
 import { useCart } from '../context/CartContext';
-import { Product } from '../services/api-interfaces';
+import { Product, useGetProduct } from '../services/api';
 import './ProductDetails.css';
 
 const ProductDetails: React.FC = () => {
@@ -14,7 +14,8 @@ const ProductDetails: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const getProduct = useGetProduct(id || '');
+  
   useEffect(() => {
     const loadProduct = async () => {
       if (!id) return;
@@ -22,7 +23,7 @@ const ProductDetails: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const productData = await fetch(`http://localhost:4200/api/products/${id}?tech=react`).then(res => res.json());
+        const productData = await getProduct();
         if (productData) {
           setProduct(productData);
         } else {
@@ -70,22 +71,12 @@ const ProductDetails: React.FC = () => {
         <button 
           className="add-to-cart-btn"
           onClick={handleAddToCart}
-          disabled={!product.inStock}
         >
-          {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+          Add to Cart
         </button>
         <ExpandableContainer header="Description">
           <p>{product.description}</p>
         </ExpandableContainer>
-        {product.features && (
-          <ExpandableContainer header="Features">
-            <ul>
-              {product.features.map((feature, index) => (
-                <li key={index}>{feature}</li>
-              ))}
-            </ul>
-          </ExpandableContainer>
-        )}
       </div>
     </div>
   );

@@ -3,14 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { apiService } from './services/api';
+import { ApiContext } from './context/ApiContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <ApiContext.Provider value={apiService}>  
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </ApiContext.Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

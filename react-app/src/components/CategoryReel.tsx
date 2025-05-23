@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Category, Product } from '../services/api-interfaces';
+import { Category, Product } from '../services/api';
 import ProductItem from './ProductItem';
 import { useProductsStore } from '../stores/productsStore';
+import { ApiContext } from '../context/ApiContext';
 import './CategoryReel.css';
 
 export interface CategoryReelProps {
@@ -13,12 +14,14 @@ export interface CategoryReelProps {
 const CategoryReel: React.FC<CategoryReelProps> = ({ category, isLcp = false }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { getProducts, setProducts } = useProductsStore();
-  const products = getProducts(category.id);
+  const { getProducts } = useContext(ApiContext);
+  const productsPromise = getProducts({ categoryId: category.id, pageSize: 5 });
+  const { setProducts, getProductsForCategory } = useProductsStore();
+  const categoryProducts = getProductsForCategory(category.id);
 
   useEffect(() => {
     const loadProducts = async () => {
-      if (products.length > 0) {
+      if (categoryProducts.length > 0) {
         setLoading(false);
         return;
       }
@@ -26,8 +29,8 @@ const CategoryReel: React.FC<CategoryReelProps> = ({ category, isLcp = false }) 
       try {
         setLoading(true);
         setError(null);
-        const productsData = await fetch(`http://localhost:4200/api/products?categoryId=${category.id}&pageSize=5&tech=react`).then(res => res.json());
-        setProducts(category.id, productsData);
+        const productsData = await productsPromise;
+        setProducts(productsData);
       } catch (err) {
         setError('Failed to load products. Please try again later.');
         console.error('Error loading products:', err);
@@ -37,7 +40,7 @@ const CategoryReel: React.FC<CategoryReelProps> = ({ category, isLcp = false }) 
     };
 
     loadProducts();
-  }, [category.id, products.length, setProducts]);
+  }, [category.id, categoryProducts.length, productsPromise, setProducts]);
 
   return (
     <div className="category-reel">
@@ -55,7 +58,7 @@ const CategoryReel: React.FC<CategoryReelProps> = ({ category, isLcp = false }) 
         <div className="loading">Loading products...</div>
       ) : (
         <div className="products">
-          {products.map((product, index) => (
+          {categoryProducts.map((product: Product, index: number) => (
             <ProductItem
               key={product.id}
               product={product}

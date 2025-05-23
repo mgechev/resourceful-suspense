@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { marked } from 'marked';
 import { useCart } from '../../context/CartContext';
 import { useProductsStore } from '../../stores/productsStore';
-import { chatService } from '../../services/chatService';
 import styles from './Chat.module.css';
+import { ApiContext } from '../../context/ApiContext';
 
 interface ChatMessage {
   text: string;
@@ -16,7 +16,7 @@ const Chat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { addToCart } = useCart();
-  const { getAllProducts, setProducts } = useProductsStore();
+  const { sendMessage, getProduct } = useContext(ApiContext);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,7 +26,7 @@ const Chat: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const sendMessage = async () => {
+  const handleSendMessage = async () => {
     if (!input.trim()) return;
 
     const userMessage = input.trim();
@@ -35,25 +35,15 @@ const Chat: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const data = await chatService.sendMessage(userMessage);
+      const data = await sendMessage(userMessage);
       setMessages((prev) => [...prev, { text: data.message, by: 'bot' }]);
 
       if (!data.action || data.action.type !== 'addToCart') {
         return;
       }
 
-      let allProducts = getAllProducts();
-      if (!Object.keys(allProducts).length) {
-        const products = await chatService.fetchProducts();
-        const productsPerCategory = chatService.groupProductsByCategory(products);
-        
-        for (const [categoryId, products] of Object.entries(productsPerCategory)) {
-          setProducts(categoryId, products);
-        }
-        allProducts = getAllProducts();
-      }
+      const product = await getProduct(data.action.params.id);
 
-      const product = Object.values(allProducts).flat().find(p => p.id === data.action?.params.id);
       if (!product) {
         return;
       }
@@ -70,7 +60,7 @@ const Chat: React.FC = () => {
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      handleSendMessage();
     }
   };
 
@@ -109,7 +99,7 @@ const Chat: React.FC = () => {
           rows={1}
         />
         <button 
-          onClick={sendMessage} 
+          onClick={handleSendMessage} 
           disabled={isLoading || !input.trim()}
           className={styles.sendButton}
         >

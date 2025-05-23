@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { CartItem } from '../types';
+import { Product } from '../services/api';
+
+export interface CartItem extends Product {
+  quantity: number;
+}
 
 const CART_STORAGE_KEY = 'ecommerce-cart';
 

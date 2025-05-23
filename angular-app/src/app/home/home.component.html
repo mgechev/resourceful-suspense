@@ -20,4 +20,8 @@
   <ec-category-reel [category]="category" [isLcp]="i === 0" />
 }
 
-<ec-recommended-products />
+@defer (on viewport; prefetch on idle) {
+  <ec-recommended-products />
+} @placeholder {
+  <div class="spacer"></div>
+}

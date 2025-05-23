@@ -75,3 +75,9 @@ export async function getProduct(tech: 'angular' | 'react', id: string): Promise
 export async function getCategories(tech: 'angular' | 'react'): Promise<Category[]> {
   return data[tech].categories as Category[];
 }
+
+export async function getRecommendedProducts(tech: 'angular' | 'react'): Promise<Product[]> {
+  const products = data[tech].products as Product[];
+  const shuffled = [...products].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, 4);
+}

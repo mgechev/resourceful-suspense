@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryReel from '../components/CategoryReel';
+import RecommendedProducts from '../components/RecommendedProducts';
 import { mockApi, Category } from '../services/mockApi';
 import './Home.css';
 
@@ -71,6 +72,7 @@ const Home: React.FC = () => {
             />
           ))
         )}
+        <RecommendedProducts />
       </section>
     </div>
   );

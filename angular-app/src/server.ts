@@ -8,7 +8,7 @@ import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promptModel } from './ai';
-import { getProducts, getProduct, getCategories } from './api';
+import { getProducts, getProduct, getCategories, getRecommendedProducts } from './api';
 import cors from 'cors';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
@@ -70,6 +70,12 @@ app.get('/api/categories', async (req, res) => {
   const tech = req.query['tech'] as 'angular' | 'react';
   const categories = await getCategories(tech as 'angular' | 'react');
   res.json(categories);
+});
+
+app.get('/api/recommended-products', async (req, res) => {
+  const tech = req.query['tech'] as 'angular' | 'react';
+  const products = await getRecommendedProducts(tech as 'angular' | 'react');
+  res.json(products);
 });
 
 /**

@@ -13,6 +13,7 @@ type PriceTagType = 'full' | 'prices-only' | 'current-price';
 
 @Component({
   selector: 'ec-price-tag',
+  standalone: true,
   imports: [CurrencyPipe, PercentPipe],
   templateUrl: './price-tag.component.html',
   styleUrl: './price-tag.component.scss',

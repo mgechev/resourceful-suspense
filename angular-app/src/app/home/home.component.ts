@@ -19,6 +19,7 @@ const CATEGORY_REELS_COUNT = 3;
 
 @Component({
   selector: 'ec-home',
+  standalone: true,
   imports: [
     AutocompleteProductSearchComponent,
     CategoryReelComponent,

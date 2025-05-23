@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { lazy, useState, useEffect, Suspense, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryReel from '../components/CategoryReel';
-import RecommendedProducts from '../components/RecommendedProducts';
 import { mockApi, Category } from '../services/mockApi';
 import './Home.css';
+
+const LazyRecommendedProducts = lazy(() => import('../components/RecommendedProducts'));
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +12,26 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showRecommended, setShowRecommended] = useState(false);
+  const recommendedRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowRecommended(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (recommendedRef.current) {
+      observer.observe(recommendedRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -72,7 +93,13 @@ const Home: React.FC = () => {
             />
           ))
         )}
-        <RecommendedProducts />
+        <div ref={recommendedRef}>
+          {showRecommended && (
+            <Suspense fallback={<div>Loading recommended products...</div>}>
+              <LazyRecommendedProducts />
+            </Suspense>
+          )}
+        </div>
       </section>
     </div>
   );

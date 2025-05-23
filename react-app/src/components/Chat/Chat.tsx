@@ -1,22 +1,23 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { marked } from 'marked';
 import { useCart } from '../../context/CartContext';
-import { useProductsStore } from '../../stores/productsStore';
 import styles from './Chat.module.css';
 import { ApiContext } from '../../context/ApiContext';
 
+import { useGetProduct, useSendMessage } from '../../services/async-state';
 interface ChatMessage {
   text: string;
   by: 'user' | 'bot';
 }
 
 const Chat: React.FC = () => {
+  const sendMessage = useSendMessage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const getProduct = useGetProduct();
   const { addToCart } = useCart();
-  const { sendMessage, getProduct } = useContext(ApiContext);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -43,7 +44,6 @@ const Chat: React.FC = () => {
       }
 
       const product = await getProduct(data.action.params.id);
-
       if (!product) {
         return;
       }

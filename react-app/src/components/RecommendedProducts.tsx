@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductImage from './ProductImage';
 import PriceTag from './PriceTag';
 import styles from './RecommendedProducts.module.css';
 import { Product } from '../services/api';
-import { ApiContext } from '../context/ApiContext';
+import { useGetRecommendedProducts } from '../services/async-state';
 
 const RecommendedProducts: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
-  const { getRecommendedProducts } = useContext(ApiContext);
+  const getRecommendedProducts = useGetRecommendedProducts();
 
   useEffect(() => {
     const loadProducts = async () => {

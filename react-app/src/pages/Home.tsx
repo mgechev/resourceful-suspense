@@ -3,16 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import CategoryReel from '../components/CategoryReel';
 import './Home.css';
 import { Category } from '../services/api';
-import { useGetCategories } from '../services/api';
 
 const LazyRecommendedProducts = lazy(() => import('../components/RecommendedProducts'));
 
-const Home: React.FC = () => {
+const Home: React.FC<{ categories: Category[] }> = ({ categories }) => {
   const navigate = useNavigate();
-  const getCategories = useGetCategories();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showRecommended, setShowRecommended] = useState(false);
   const recommendedRef = useRef<HTMLDivElement>(null);
@@ -40,24 +35,6 @@ const Home: React.FC = () => {
 
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const categoriesData = await getCategories();
-        setCategories(categoriesData);
-      } catch (err) {
-        setError('Failed to load categories. Please try again later.');
-        console.error('Error loading categories:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCategories();
-  }, [getCategories]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,18 +66,13 @@ const Home: React.FC = () => {
 
       <section className="featuredSection">
         <h2 className="sectionTitle">Featured Categories</h2>
-        {error && <div className="error-message">{error}</div>}
-        {loading ? (
-          <div className="loading">Loading categories...</div>
-        ) : (
-          categories.map((category, index) => (
+        {categories.map((category, index) => (
             <CategoryReel
               key={category.id}
               category={category}
               isLcp={index === 0}
             />
-          ))
-        )}
+          ))}
         <div ref={recommendedRef}>
           {showRecommended && (
             <Suspense fallback={<div>Loading recommended products...</div>}>

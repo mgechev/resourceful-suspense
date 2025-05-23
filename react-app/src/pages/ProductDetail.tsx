@@ -5,14 +5,16 @@ import PriceTag from '../components/PriceTag';
 import { useCart } from '../context/CartContext';
 import styles from './ProductDetail.module.css';
 import { Product } from '../services/api';
+import { useGetProduct } from '../services/async-state';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
+  const getProduct = useGetProduct();
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -23,7 +25,7 @@ const ProductDetail: React.FC = () => {
       }
 
       try {
-        const productData = await fetch(`http://localhost:4200/api/products/${id}?tech=react`).then(res => res.json());
+        const productData = await getProduct(id);
         if (!productData) {
           setError('Product not found');
         } else {

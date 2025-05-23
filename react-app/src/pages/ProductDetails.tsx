@@ -4,7 +4,8 @@ import ProductImage from '../components/ProductImage';
 import PriceTag from '../components/PriceTag';
 import ExpandableContainer from '../components/ExpandableContainer';
 import { useCart } from '../context/CartContext';
-import { Product, useGetProduct } from '../services/api';
+import { Product } from '../services/api';
+import { useGetProduct } from '../services/async-state';
 import './ProductDetails.css';
 
 const ProductDetails: React.FC = () => {
@@ -14,8 +15,8 @@ const ProductDetails: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const getProduct = useGetProduct(id || '');
-  
+  const getProduct = useGetProduct();
+
   useEffect(() => {
     const loadProduct = async () => {
       if (!id) return;
@@ -23,7 +24,7 @@ const ProductDetails: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const productData = await getProduct();
+        const productData = await getProduct(id);
         if (productData) {
           setProduct(productData);
         } else {

@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { ApiContext } from "../context/ApiContext";
 import { useCategoriesStore } from "../stores/categoriesStore";
 import { useProductsStore } from "../stores/productsStore";
 
@@ -23,7 +25,7 @@ export interface Category {
   order: number;
 }
 
-interface GetProductsParams {
+export interface GetProductsParams {
   categoryId?: string;
   pageSize?: number;
   page?: number;
@@ -34,7 +36,7 @@ interface GetProductsParams {
   batchIds?: string[];
 }
 
-interface ChatResponse {
+export interface ChatResponse {
   message: string;
   action?: {
     type: string;
@@ -162,56 +164,5 @@ const apiService = {
     return promise;
   },
 };
-
-// Custom hooks that use the API service
-export function useGetProducts(params?: GetProductsParams): () => Promise<Product[]> {
-  const productStore = useProductsStore();
-  
-  return async () => {
-    const cachedProducts = productStore.getProductsForCategory(params?.categoryId || '');
-    if (cachedProducts.length > 0) {
-      return cachedProducts;
-    }
-    
-    const products = await apiService.getProducts(params);
-    productStore.setProducts(products);
-    return products;
-  };
-}
-
-export function useGetProduct(id: string): () => Promise<Product|null> {
-  const productStore = useProductsStore();
-  
-  return async () => {
-    const cachedProduct = productStore.getProduct(id);
-    if (cachedProduct) {
-      return cachedProduct;
-    }
-    
-    const product = await apiService.getProduct(id);
-    if (product) {
-      productStore.setProducts([product]);
-    }
-    return product;
-  };
-}
-
-export function useGetCategories(): () => Promise<Category[]> {
-  const categoriesStore = useCategoriesStore();
-  
-  return async () => {
-    if (categoriesStore.categories.length > 0) {
-      return categoriesStore.categories;
-    }
-    
-    const categories = await apiService.getCategories();
-    categoriesStore.setCategories(categories);
-    return categories;
-  };
-}
-
-export function useSendMessage(): (message: string) => Promise<ChatResponse> {
-  return apiService.sendMessage;
-}
 
 export { apiService };

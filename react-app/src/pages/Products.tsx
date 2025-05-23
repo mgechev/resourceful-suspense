@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchInput from '../components/SearchInput';
-import SkeletonProductItem from '../components/SkeletonProductItem';
 import PriceTag from '../components/PriceTag';
 import ProductImage from '../components/ProductImage';
 import { Product, Category } from '../services/api';

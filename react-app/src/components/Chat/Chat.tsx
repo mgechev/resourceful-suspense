@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, use } from 'react';
 import { marked } from 'marked';
 import { useCart } from '../../context/CartContext';
 import styles from './Chat.module.css';
@@ -9,7 +9,19 @@ interface ChatMessage {
   by: 'user' | 'bot';
 }
 
+let dataPromise: null | Promise<string> = null;
+
+const getConfig = async () => {
+  if (!dataPromise) {
+    dataPromise = fetch('/api/user')
+      .then((response) => response.json())
+      .then((data) => data.name);
+  }
+  return dataPromise;
+}
+
 const Chat: React.FC = () => {
+  const name = use(getConfig());
   const sendMessage = useSendMessage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -35,7 +47,7 @@ const Chat: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const data = await sendMessage(userMessage);
+      const data = await sendMessage(userMessage, name);
       setMessages((prev) => [...prev, { text: data.message, by: 'bot' }]);
 
       if (!data.action || data.action.type !== 'addToCart') {

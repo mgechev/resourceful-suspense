@@ -109,16 +109,16 @@ export function useGetRecommendedProducts(): () => Promise<Product[]> {
   };
 }
 
-export function useSendMessage(): (message: string) => Promise<ChatResponse> {
+export function useSendMessage(): (message: string, name: string) => Promise<ChatResponse> {
   const apiService = useContext(ApiContext);
 
-  return async (message: string) => {
+  return async (message: string, name: string) => {
     const cacheKey = getCacheKey('sendMessage', { message });
     if (promiseCache.has(cacheKey)) {
       return promiseCache.get(cacheKey);
     }
 
-    const promise = apiService.sendMessage(message);
+    const promise = apiService.sendMessage(message, name);
     promiseCache.set(cacheKey, promise);
     return promise;
   };

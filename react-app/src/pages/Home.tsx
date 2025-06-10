@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import CategoryReel from '../components/CategoryReel';
 import './Home.css';
 import { Category } from '../services/api';
+import { preloadModule } from 'react-dom';
 
 const LazyRecommendedProducts = lazy(() => import('../components/RecommendedProducts'));
 
@@ -14,7 +15,7 @@ const Home: React.FC<{ categories: Category[] }> = ({ categories }) => {
 
   useEffect(() => {
     requestIdleCallback(() => {
-      import('../components/RecommendedProducts').catch(console.error);
+      preloadModule('../components/RecommendedProducts', { as: 'script' });
     });
   }, []);
 

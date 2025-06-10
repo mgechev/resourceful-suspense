@@ -97,9 +97,9 @@ const apiService = {
     return promise;
   },
 
-  async sendMessage(message: string): Promise<ChatResponse> {
+  async sendMessage(message: string, name: string): Promise<ChatResponse> {
     const promise = (async () => {
-      const response = await fetch(`http://localhost:4200/api/prompt?prompt=${message}&tech=react&name=React`);
+      const response = await fetch(`http://localhost:4200/api/prompt?prompt=${message}&tech=react&name=${name}`);
       if (!response.ok) {
         throw new Error('Failed to get response');
       }

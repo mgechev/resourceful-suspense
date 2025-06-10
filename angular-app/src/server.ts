@@ -34,7 +34,7 @@ app.get('/api/prompt', async (req, res) => {
 
 app.get('/api/user', async (_, res) => {
   res.json({
-    name: 'John Doe',
+    name: 'Minko Gechev',
     email: 'john.doe@example.com',
   });
 });

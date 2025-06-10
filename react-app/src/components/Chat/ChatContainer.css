@@ -1,6 +1,6 @@
 .chat-container-wrapper {
   position: fixed;
-  bottom: 0;
+  bottom: -2px;
   right: 2rem;
   width: 350px;
   z-index: 1000;

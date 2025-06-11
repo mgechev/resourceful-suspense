@@ -20,7 +20,7 @@
   <ec-category-reel [category]="category" [isLcp]="i === 0" />
 }
 
-@defer (on viewport; prefetch on idle) {
+@defer (hydrate on viewport; prefetch on idle) {
   <ec-recommended-products />
 } @placeholder {
   <div class="spacer"></div>
